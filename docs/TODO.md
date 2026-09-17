@@ -1,16 +1,16 @@
 # TODO
 
-現在の実装で残っている、Odin 版との差分
+Remaining differences from the Odin implementation.
 
-## 次の作業候補
+## Next Candidates
 
-- `init_pipeline` の移植と alpha / additive pipeline の利用
+- Port `init_pipeline` and use the alpha / additive pipelines.
 
-## 入力
+## Input
 
-- イベントコールバックから描画状態を変更する場合の Mutex の扱い
+- Mutex handling when changing drawing state from event callbacks.
 
-## 保留
+## Deferred
 
-- テキスト描画のフォント拡張
-- 一時アロケータの解放
+- Additional fonts for text rendering.
+- Temporary allocator cleanup.
