@@ -613,6 +613,55 @@ pub fn on_mouse_moved(move_fn: FnMove) {
     ctx.pref.move_fn = Some(move_fn)
 }
 
+#[macro_export]
+macro_rules! on_init {
+    ($callback:expr) => {
+        $crate::on_init($crate::FnCb::FnCbWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_exit {
+    ($callback:expr) => {
+        $crate::on_exit($crate::FnCb::FnCbWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_key_pressed {
+    ($callback:expr) => {
+        $crate::on_key_pressed($crate::FnKeyDown::FnKeyDownWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_key_released {
+    ($callback:expr) => {
+        $crate::on_key_released($crate::FnKeyUp::FnKeyUpWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_mouse_pressed {
+    ($callback:expr) => {
+        $crate::on_mouse_pressed($crate::FnClick::FnClickWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_mouse_released {
+    ($callback:expr) => {
+        $crate::on_mouse_released($crate::FnUnClick::FnUnClickWithNoPtr($callback))
+    };
+}
+
+#[macro_export]
+macro_rules! on_mouse_moved {
+    ($callback:expr) => {
+        $crate::on_mouse_moved($crate::FnMove::FnMoveWithNoPtr($callback))
+    };
+}
+
 pub fn run(draw_fn: FnCbWithNoPtr) {
     setup(CCConfig {
         draw_fn: Some(FnCb::FnCbWithNoPtr(draw_fn)),
