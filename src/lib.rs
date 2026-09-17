@@ -147,7 +147,7 @@ pub struct CCConfig {
     pub user_data: RawPtr,
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct CCStyle {
     pub color: Color, // = gg.black,
     pub text_config: TextCfg,
