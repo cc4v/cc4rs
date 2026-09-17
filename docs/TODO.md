@@ -7,7 +7,7 @@ Remaining differences from the Odin implementation.
 - Matrix
 - Image
 
-## Deferred
+## Others
 
 - Additional fonts for text rendering.
 - Use the initialized alpha and additive pipelines during drawing.
