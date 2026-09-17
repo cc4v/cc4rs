@@ -2,7 +2,7 @@
 
 <img alt="cc4rs logo example" src="docs/screenshot_logo.png" width="350px">
 
-Creative Coding framework in Rust language (using Sokol framework)
+Creative Coding framework in Rust language (using [Sokol framework](https://github.com/floooh/sokol-rust/))
 
 > [!Warning]
 > - Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
