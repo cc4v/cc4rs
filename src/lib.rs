@@ -277,6 +277,23 @@ fn end() {
     sg::commit();
 }
 
+fn init_pipeline() {
+    let mut alpha_desc = sg::PipelineDesc::default();
+    alpha_desc.colors[0].blend.enabled = true;
+    alpha_desc.colors[0].blend.src_factor_rgb = sg::BlendFactor::SrcAlpha;
+    alpha_desc.colors[0].blend.dst_factor_rgb = sg::BlendFactor::OneMinusSrcAlpha;
+
+    let mut add_desc = alpha_desc;
+    add_desc.colors[0].blend.dst_factor_rgb = sg::BlendFactor::One;
+
+    let alpha = sgl::make_pipeline(&alpha_desc);
+    let add = sgl::make_pipeline(&add_desc);
+    with_current_cc(|cc| {
+        cc.pipelines.alpha = alpha;
+        cc.pipelines.add = add;
+    });
+}
+
 extern "C" fn init(_user_data: *mut ffi::c_void) {
     sg::setup(&sg::Desc {
         environment: sglue::environment(),
@@ -291,6 +308,7 @@ extern "C" fn init(_user_data: *mut ffi::c_void) {
     text_desc.fonts[0] = sdtx::font_oric();
     text_desc.logger.func = Some(slog::slog_func);
     sdtx::setup(&text_desc);
+    init_pipeline();
 
     with_current_cc(|cc| {
         if let Some(callback) = &cc.config.init_fn {
