@@ -1,6 +1,6 @@
 # cc4rs
 
-![cc4rs logo example](docs/screenshot_logo.png)
+<img alt="cc4rs logo example" src="docs/screenshot_logo.png" width="400px">
 
 Creative Coding framework in Rust language (using Sokol framework)
 
