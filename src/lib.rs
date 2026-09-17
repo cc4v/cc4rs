@@ -2,7 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use sokol::{app as sapp, gfx as sg, gl as sgl, glue as sglue};
+use sokol::{
+    app as sapp,
+    gfx::{self as sg, LoadAction, PassAction},
+    gl as sgl, glue as sglue,
+};
 use stack_stack::Stack;
 use std::{
     ffi,
@@ -14,6 +18,8 @@ mod push_pop;
 pub mod types;
 
 pub use push_pop::*;
+
+use crate::colors::color_from_rgba;
 
 pub type Vector2<T> = crate::types::Vector2<T>;
 pub type Vector3<T> = crate::types::Vector3<T>;
@@ -222,6 +228,13 @@ pub struct CC {
 }
 
 static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| Mutex::new(CCContext::default()));
+static STATE: LazyLock<Mutex<CCState>> = LazyLock::new(|| {
+    let mut s = CCState::default();
+    s.pass_action.colors[0].load_action = LoadAction::Clear;
+    s.pass_action.colors[0].clear_value = color_from_rgba(0, 0, 0, 255);
+
+    return Mutex::new(s);
+});
 
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
     G_CTX.lock().unwrap()
