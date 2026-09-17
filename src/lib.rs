@@ -15,9 +15,11 @@ use std::{
 
 pub mod colors;
 mod push_pop;
+pub mod shape;
 pub mod types;
 
 pub use push_pop::*;
+pub use shape::*;
 
 use crate::colors::color_from_rgba;
 
@@ -86,36 +88,43 @@ pub type FnClickWithNoPtr = fn(f32, f32, sapp::Mousebutton);
 pub type FnUnClickWithPtr = fn(f32, f32, sapp::Mousebutton, RawPtr);
 pub type FnUnClickWithNoPtr = fn(f32, f32, sapp::Mousebutton);
 
+#[derive(Clone, Copy)]
 pub enum FnCb {
     FnCbWithPtr(FnCbWithPtr),
     FnCbWithNoPtr(FnCbWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnEvent {
     FnEventWithPtr(FnEventWithPtr),
     FnEventWithNoPtr(FnEventWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnMove {
     FnMoveWithPtr(FnMoveWithPtr),
     FnMoveWithNoPtr(FnMoveWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnKeyDown {
     FnKeyDownWithPtr(FnKeyDownWithPtr),
     FnKeyDownWithNoPtr(FnKeyDownWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnKeyUp {
     FnKeyUpWithPtr(FnKeyUpWithPtr),
     FnKeyUpWithNoPtr(FnKeyUpWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnClick {
     FnClickWithPtr(FnClickWithPtr),
     FnClickWithNoPtr(FnClickWithNoPtr),
 }
 
+#[derive(Clone, Copy)]
 pub enum FnUnClick {
     FnUnClickWithPtr(FnUnClickWithPtr),
     FnUnClickWithNoPtr(FnUnClickWithNoPtr),
@@ -289,25 +298,25 @@ extern "C" fn init(_user_data: *mut ffi::c_void) {
 }
 
 extern "C" fn frame(_user_data: *mut ffi::c_void) {
-    with_current_cc(|cc| {
-        if let Some(callback) = &cc.config.update_fn {
-            match callback {
-                FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
-                FnCb::FnCbWithNoPtr(callback) => callback(),
-            }
-        }
-    });
+    let update = {
+        let context = ctx();
+        context
+            .cc
+            .as_ref()
+            .map_or((None, NULLPTR), |cc| (cc.config.update_fn, cc.config.user_data))
+    };
+    invoke_callback(update.0, update.1);
 
     begin();
 
-    with_current_cc(|cc| {
-        if let Some(callback) = &cc.config.draw_fn {
-            match callback {
-                FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
-                FnCb::FnCbWithNoPtr(callback) => callback(),
-            }
-        }
-    });
+    let draw = {
+        let context = ctx();
+        context
+            .cc
+            .as_ref()
+            .map_or((None, NULLPTR), |cc| (cc.config.draw_fn, cc.config.user_data))
+    };
+    invoke_callback(draw.0, draw.1);
 
     end();
 
@@ -318,6 +327,14 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
         cc.prev_mousedown = cc.last_mousedown;
         cc.prev_modifiers = cc.last_modifiers;
     });
+}
+
+fn invoke_callback(callback: Option<FnCb>, user_data: RawPtr) {
+    match callback {
+        Some(FnCb::FnCbWithPtr(callback)) => callback(user_data),
+        Some(FnCb::FnCbWithNoPtr(callback)) => callback(),
+        None => {}
+    }
 }
 
 extern "C" fn cleanup(_user_data: *mut ffi::c_void) {
