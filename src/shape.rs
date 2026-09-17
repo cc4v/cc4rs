@@ -2,7 +2,10 @@ use crate::{with_current_cc, Color};
 use sokol::gl as sgl;
 
 pub fn set_color(color: Color) {
-    with_current_cc(|cc| cc.current_style.color = color);
+    with_current_cc(|cc| {
+        cc.current_style.color = color;
+        cc.current_style.text_config.color = color;
+    });
 }
 
 pub fn fill() {

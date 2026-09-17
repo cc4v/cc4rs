@@ -16,10 +16,12 @@ use std::{
 pub mod colors;
 mod push_pop;
 pub mod shape;
+pub mod text;
 pub mod types;
 
 pub use push_pop::*;
 pub use shape::*;
+pub use text::*;
 
 use crate::colors::color_from_rgba;
 
@@ -285,7 +287,10 @@ extern "C" fn init(_user_data: *mut ffi::c_void) {
         logger: sgl::Logger { func: Some(slog::slog_func), ..Default::default() },
         ..Default::default()
     });
-    sdtx::setup(&sdtx::Desc::default());
+    let mut text_desc = sdtx::Desc::default();
+    text_desc.fonts[0] = sdtx::font_oric();
+    text_desc.logger.func = Some(slog::slog_func);
+    sdtx::setup(&text_desc);
 
     with_current_cc(|cc| {
         if let Some(callback) = &cc.config.init_fn {
@@ -308,6 +313,8 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     invoke_callback(update.0, update.1);
 
     begin();
+
+    text::init_frame();
 
     let draw = {
         let context = ctx();
