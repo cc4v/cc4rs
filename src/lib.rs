@@ -153,6 +153,7 @@ pub fn default_style() -> CCStyle {
     };
 }
 
+#[derive(Default)]
 pub struct CCPipelines {
     pub alpha: sgl::Pipeline,
     pub add: sgl::Pipeline,
@@ -195,6 +196,29 @@ pub struct CC {
     pub state: Option<&'static CCState>,
     pub current_style: CCStyle,
     pub style_history: Stack<CCStyle, CCMaxStyleHistory>,
+    pub pipelines: CCPipelines,
+    // pub fullscreen:     bool,
+    // pub image_cache:    [dynamic]Image,
+    pub img_count: usize,
+    pub window_title_cstr: std::ffi::CString,
+    pub width: usize,
+    pub height: usize,
+    pub mouse_x: f32,
+    pub mouse_y: f32,
+    pub mouse_dx: f32,
+    pub mouse_dy: f32,
+    pub scroll_x: f32,
+    pub scroll_y: f32,
+    pub last_modifiers: Modifiers,
+    pub prev_modifiers: Modifiers,
+    pub last_keycode: sapp::Keycode,
+    pub prev_keycode: sapp::Keycode,
+    pub last_keydown: bool,
+    pub prev_keydown: bool,
+    pub last_mousebutton: sapp::Mousebutton,
+    pub prev_mousebutton: sapp::Mousebutton,
+    pub last_mousedown: bool,
+    pub prev_mousedown: bool,
 }
 
 static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| Mutex::new(CCContext::default()));
