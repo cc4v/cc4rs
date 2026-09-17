@@ -6,6 +6,7 @@ use std::{ffi, sync::{LazyLock, Mutex}};
 use sokol::{app as sapp, gfx as sg, glue as sglue};
 
 pub mod types;
+pub mod colors;
 
 pub type Vector2<T> = crate::types::vector::Vector2<T>;
 pub type Vector3<T> = crate::types::vector::Vector3<T>;
@@ -149,6 +150,8 @@ fn setup(config: CCConfig){
 
     let w = 400;
     let h = 400;
+
+    let bg_color = colors::WHITE;
 }
 
 pub fn run(draw_fn: FnCbWithNoPtr) {
