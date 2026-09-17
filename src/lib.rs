@@ -285,12 +285,76 @@ fn ctx() -> std::sync::MutexGuard<'static, CCContext> {
 // }
 
 fn setup(config: CCConfig) {
-    let ctx = ctx();
+    let mut context = ctx();
+    let preference = std::mem::take(&mut context.pref);
 
-    let w = 400;
-    let h = 400;
+    let width = preference.size.map_or(400, |size| size.x as i32);
+    let height = preference.size.map_or(400, |size| size.y as i32);
+    let bg_color = preference.bg_color.unwrap_or_else(colors::white);
+    let title = if preference.title.is_empty() {
+        String::from("Canvas")
+    } else {
+        preference.title
+    };
 
-    let bg_color = colors::white();
+    let mut cc_config = config;
+    if cc_config.user_data == NULLPTR {
+        cc_config.user_data = preference.user_data;
+    }
+    if cc_config.init_fn.is_none() {
+        cc_config.init_fn = preference.init_fn;
+    }
+    if cc_config.cleanup_fn.is_none() {
+        cc_config.cleanup_fn = preference.cleanup_fn;
+    }
+    if cc_config.event_fn.is_none() {
+        cc_config.event_fn = preference.event_fn;
+    }
+    if cc_config.keydown_fn.is_none() {
+        cc_config.keydown_fn = preference.keydown_fn;
+    }
+    if cc_config.keyup_fn.is_none() {
+        cc_config.keyup_fn = preference.keyup_fn;
+    }
+    if cc_config.click_fn.is_none() {
+        cc_config.click_fn = preference.click_fn;
+    }
+    if cc_config.unclick_fn.is_none() {
+        cc_config.unclick_fn = preference.unclick_fn;
+    }
+    if cc_config.move_fn.is_none() {
+        cc_config.move_fn = preference.move_fn;
+    }
+
+    state().pass_action.colors[0].clear_value = bg_color;
+
+    let window_title_cstr = ffi::CString::new(title).expect("window title contains NUL");
+    let cc = Box::leak(Box::new(CC {
+        config: cc_config,
+        current_style: default_style(),
+        state: None,
+        style_history: Stack::default(),
+        pipelines: CCPipelines::default(),
+        window_title_cstr,
+        width: width as usize,
+        height: height as usize,
+        ..Default::default()
+    }));
+    context.cc = Some(cc);
+    drop(context);
+
+    let mut desc = sapp::Desc::new();
+    desc.width = width;
+    desc.height = height;
+    desc.fullscreen = preference.fullscreen;
+    desc.window_title = cc.window_title_cstr.as_ptr();
+    // init_userdata_cb = Some(init),
+    desc.frame_userdata_cb = Some(frame);
+    // event_userdata_cb = Some(_on_event),
+    // cleanup_userdata_cb = Some(cleanup),
+    desc.user_data = cc.config.user_data as *mut ffi::c_void;
+
+    sapp::run(&desc);
 }
 
 pub fn on_init(init_fn: FnCb) {
