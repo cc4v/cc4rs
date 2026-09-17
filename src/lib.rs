@@ -98,7 +98,7 @@ pub struct CCConfig  {
 }
 
 #[derive(Default)]
-pub struct InitialPreference<'a> {
+pub struct InitialPreference {
     pub size:         Option<Vector2<i32>>,
 	pub init_fn:      Option<FnCb>,
 	pub cleanup_fn:   Option<FnCb>,
@@ -109,15 +109,15 @@ pub struct InitialPreference<'a> {
 	pub unclick_fn:   Option<FnUnClick>,
 	pub move_fn:      Option<FnMove>,
 	pub bg_color:     Option<Color>,
-	pub title:        &'a str, // = "Canvas"
+	pub title:        &'static str, // = "Canvas"
 	pub fullscreen:   bool,
 	pub user_data:    RawPtr
 }
 
 #[derive(Default)]
-pub struct CCContext<'a, 'b> {
-	pub cc:  Option<&'a CC>,
-	pub pref: InitialPreference<'b>
+pub struct CCContext {
+	pub cc:  Option<&'static CC>,
+	pub pref: InitialPreference,
 }
 
 #[derive(Default)]
@@ -126,15 +126,15 @@ pub struct CC {
 	// state:          ^CCState,
 }
 
-static G_CTX: LazyLock<Mutex<CCContext<'static, 'static>>> = LazyLock::new(|| {
+static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| {
     Mutex::new(CCContext::default())
 });
 
-fn get_context() -> std::sync::MutexGuard<'static, CCContext<'static, 'static>> {
+fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
     G_CTX.lock().unwrap()
 }
 
-fn ctx() -> std::sync::MutexGuard<'static, CCContext<'static, 'static>> {
+fn ctx() -> std::sync::MutexGuard<'static, CCContext> {
     get_context()
 }
 
