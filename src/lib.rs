@@ -236,6 +236,11 @@ static STATE: LazyLock<Mutex<CCState>> = LazyLock::new(|| {
     return Mutex::new(s);
 });
 
+static PREV_SIZE: LazyLock<Mutex<(usize, usize)>> = LazyLock::new(|| Mutex::new((0, 0)));
+fn prev_size() -> std::sync::MutexGuard<'static, (usize, usize)> {
+    PREV_SIZE.lock().unwrap()
+}
+
 fn state() -> std::sync::MutexGuard<'static, CCState> {
     STATE.lock().unwrap()
 }
@@ -259,6 +264,10 @@ fn end() {
     sdtx::draw(); // FIXME: position/layer
     sg::end_pass();
     sg::commit();
+}
+
+extern "C" fn frame(user_data: *mut ffi::c_void) {
+    // TODO: implement
 }
 
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
