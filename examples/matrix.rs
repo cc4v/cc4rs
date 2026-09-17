@@ -7,7 +7,7 @@ fn main() {
 fn draw() {
     let center_x = width() as f32 * 0.5;
     let center_y = height() as f32 * 0.5;
-    let angle = frame_count() as f32 * 0.01;
+    let angle = elapsed_time() as f32;
 
     push_matrix();
     translate(center_x, center_y, 0.0);

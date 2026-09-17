@@ -252,6 +252,7 @@ static STATE: LazyLock<Mutex<CCState>> = LazyLock::new(|| {
 });
 
 static PREV_SIZE: LazyLock<Mutex<(usize, usize)>> = LazyLock::new(|| Mutex::new((0, 0)));
+static ELAPSED_TIME: LazyLock<Mutex<f64>> = LazyLock::new(|| Mutex::new(0.0));
 fn prev_size() -> std::sync::MutexGuard<'static, (usize, usize)> {
     PREV_SIZE.lock().unwrap()
 }
@@ -325,6 +326,8 @@ extern "C" fn init(_user_data: *mut ffi::c_void) {
 }
 
 extern "C" fn frame(_user_data: *mut ffi::c_void) {
+    *ELAPSED_TIME.lock().unwrap() += sapp::frame_duration();
+
     let update = {
         let context = ctx();
         context
@@ -774,6 +777,11 @@ pub fn height() -> i32 {
 
 pub fn frame_count() -> u64 {
     sapp::frame_count()
+}
+
+/// Returns the elapsed time since the application started, in seconds.
+pub fn elapsed_time() -> f64 {
+    *ELAPSED_TIME.lock().unwrap()
 }
 
 #[macro_export]
