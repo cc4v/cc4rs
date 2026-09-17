@@ -293,6 +293,16 @@ fn setup(config: CCConfig) {
     let bg_color = colors::white();
 }
 
+pub fn on_init(init_fn: FnCb) {
+    let mut ctx = get_context();
+    ctx.pref.init_fn = Some(init_fn)
+}
+
+pub fn on_event(event_fn: FnEvent) {
+    let mut ctx = get_context();
+    ctx.pref.event_fn = Some(event_fn)
+}
+
 pub fn run(draw_fn: FnCbWithNoPtr) {
     setup(CCConfig {
         draw_fn: Some(FnCb::FnCbWithNoPtr(draw_fn)),
