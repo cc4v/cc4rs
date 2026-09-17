@@ -1,5 +1,7 @@
 # cc4rs
 
+![cc4rs logo example](docs/screenshot_logo.png)
+
 Creative Coding framework in Rust language (using Sokol framework)
 
 > [!Warning]
@@ -14,8 +16,6 @@ cargo run --example logo_icon
 
 # `cargo run --example` will show list of examples
 ```
-
-![cc4rs logo example](docs/screenshot_logo.png)
 
 ## License
 
