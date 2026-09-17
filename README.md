@@ -1,3 +1,7 @@
+# cc4rs
+
+Creative Coding framework in Rust language (using Sokol framework)
+
 ## License
 
 - Files under `externals` are submodules to each other projects:
