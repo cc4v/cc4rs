@@ -1,14 +1,13 @@
 use cc4rs::*;
-use sokol::app as sapp;
 
 fn main() {
     run(draw);
 }
 
 fn draw() {
-    let center_x = sapp::widthf() * 0.5;
-    let center_y = sapp::heightf() * 0.5;
-    let angle = sapp::frame_count() as f32 * 0.01;
+    let center_x = width() as f32 * 0.5;
+    let center_y = height() as f32 * 0.5;
+    let angle = frame_count() as f32 * 0.01;
 
     push_matrix();
     translate(center_x, center_y, 0.0);

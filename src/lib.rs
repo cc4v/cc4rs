@@ -756,6 +756,26 @@ pub fn toggle_fullscreen() {
     sapp::toggle_fullscreen();
 }
 
+pub fn width() -> i32 {
+    let context = get_context();
+    context
+        .cc
+        .as_ref()
+        .map_or_else(|| context.pref.size.map_or(0, |size| size.x), |_| sapp::width())
+}
+
+pub fn height() -> i32 {
+    let context = get_context();
+    context
+        .cc
+        .as_ref()
+        .map_or_else(|| context.pref.size.map_or(0, |size| size.y), |_| sapp::height())
+}
+
+pub fn frame_count() -> u64 {
+    sapp::frame_count()
+}
+
 #[macro_export]
 macro_rules! on_init {
     ($callback:expr) => {
