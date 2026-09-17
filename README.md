@@ -8,6 +8,10 @@ Creative Coding framework in Rust language (using Sokol framework)
 > - Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
 > - Current state is at **early stage** (APIs may change). Please consider to use [nannou](https://github.com/nannou-org/nannou) as an alternative at first.
 
+## Comparison
+
+When compared to bevy or nannou (based on bevy), it's minimal, compact, short compilation time thanks to Sokol framework.
+
 ## Examples
 
 ```bash
