@@ -10,7 +10,7 @@ Creative Coding framework in Rust language (using [Sokol framework](https://gith
 
 ## Comparison
 
-When compared to [bevy](https://github.com/bevyengine/bevy) or nannou (based on bevy), it's minimal, compact, short compilation time thanks to [Sokol framework](https://github.com/floooh/sokol-rust/).
+When compared to [bevy](https://github.com/bevyengine/bevy) or [nannou](https://github.com/nannou-org/nannou) (which based on bevy), it's minimal, compact, short compilation time thanks to [Sokol framework](https://github.com/floooh/sokol-rust/).
 
 If you need to extend this, you can use Sokol API on it.
 
