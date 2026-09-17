@@ -7,8 +7,8 @@ Remaining differences from the Odin implementation.
 - Matrix
 - Image
 
-## Others
+## Others (optional)
 
 - Additional fonts for text rendering.
 - (Use the initialized alpha and additive pipelines during drawing.)
-- Avoid reacquiring the Mutex from event callbacks when changing drawing state.
+- (Avoid reacquiring the Mutex from event callbacks when changing drawing state.)
