@@ -1,5 +1,5 @@
-use cc4rs;
+use cc4rs as cc;
 
 fn main(){
-    cc4rs::main();
+   cc::run();
 }

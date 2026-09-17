@@ -72,7 +72,7 @@ extern "C" fn cleanup(user_data: *mut ffi::c_void) {
     let _ = unsafe { Box::from_raw(user_data as *mut State) };
 }
 
-pub fn main() {
+pub fn run(){
     let state = Box::new(State { pass_action: sg::PassAction::new() });
 
     let user_data = Box::into_raw(state) as *mut ffi::c_void;
