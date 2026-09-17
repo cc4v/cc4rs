@@ -313,6 +313,21 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     end();
 }
 
+extern "C" fn cleanup(_user_data: *mut ffi::c_void) {
+    if let Some(cc) = get_context().cc {
+        if let Some(callback) = &cc.config.cleanup_fn {
+            match callback {
+                FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
+                FnCb::FnCbWithNoPtr(callback) => callback(),
+            }
+        }
+    }
+
+    sdtx::shutdown();
+    sgl::shutdown();
+    sg::shutdown();
+}
+
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
     G_CTX.lock().unwrap()
 }
@@ -394,7 +409,7 @@ fn setup(config: CCConfig) {
     desc.init_userdata_cb = Some(init);
     desc.frame_userdata_cb = Some(frame);
     // event_userdata_cb = Some(_on_event),
-    // cleanup_userdata_cb = Some(cleanup),
+    desc.cleanup_userdata_cb = Some(cleanup);
     desc.user_data = cc.config.user_data as *mut ffi::c_void;
 
     sapp::run(&desc);
