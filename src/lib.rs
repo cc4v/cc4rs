@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use sokol::{
-    app as sapp,
+    app as sapp, debugtext as sdtx,
     gfx::{self as sg, LoadAction, PassAction},
-    gl as sgl, glue as sglue,
+    gl as sgl, glue as sglue, log as slog,
 };
 use stack_stack::Stack;
 use std::{
@@ -235,6 +235,31 @@ static STATE: LazyLock<Mutex<CCState>> = LazyLock::new(|| {
 
     return Mutex::new(s);
 });
+
+fn state() -> std::sync::MutexGuard<'static, CCState> {
+    STATE.lock().unwrap()
+}
+
+fn begin() {
+    let dw = sapp::width();
+    let dh = sapp::height();
+    // sgl::viewport(0, 0, dw, dh, true);
+    sgl::defaults();
+    sgl::matrix_mode_projection();
+    sgl::ortho(0.0, (dw as f32), (dh as f32), 0.0, -1.0, 1.0)
+}
+
+fn end() {
+    sg::begin_pass(&sg::Pass {
+        action: state().pass_action,
+        swapchain: sglue::swapchain(),
+        ..Default::default()
+    });
+    sgl::draw(); // FIXME: position/layer
+    sdtx::draw(); // FIXME: position/layer
+    sg::end_pass();
+    sg::commit();
+}
 
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
     G_CTX.lock().unwrap()
