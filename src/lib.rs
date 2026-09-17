@@ -652,9 +652,81 @@ pub fn mouse_y() -> f32 {
     get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_y)
 }
 
+pub fn mouse_dx() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_dx)
+}
+
+pub fn mouse_dy() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_dy)
+}
+
+pub fn scroll_x() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.scroll_x)
+}
+
+pub fn scroll_y() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.scroll_y)
+}
+
+pub fn mouse_button() -> Mousebutton {
+    get_context()
+        .cc
+        .as_ref()
+        .map_or(Mousebutton::Invalid, |cc| cc.last_mousebutton)
+}
+
+pub fn mouse_pressed() -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| cc.last_mousedown)
+}
+
+pub fn mouse_released() -> bool {
+    !mouse_pressed()
+}
+
+pub fn mouse_just_pressed(button: Mousebutton) -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| {
+        cc.last_mousedown
+            && cc.last_mousebutton == button
+            && (cc.prev_mousebutton != cc.last_mousebutton || cc.prev_mousedown != cc.last_mousedown)
+    })
+}
+
+pub fn mouse_just_released(button: Mousebutton) -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| {
+        !cc.last_mousedown
+            && cc.last_mousebutton == button
+            && (cc.prev_mousebutton != cc.last_mousebutton || cc.prev_mousedown != cc.last_mousedown)
+    })
+}
+
+pub fn key() -> Keycode {
+    get_context()
+        .cc
+        .as_ref()
+        .map_or(Keycode::Invalid, |cc| cc.last_keycode)
+}
+
+pub fn key_pressed() -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| cc.last_keydown)
+}
+
+pub fn key_released() -> bool {
+    !key_pressed()
+}
+
 pub fn key_just_pressed(keycode: Keycode) -> bool {
     get_context().cc.as_ref().is_some_and(|cc| {
-        cc.last_keydown && !cc.prev_keydown && cc.last_keycode == keycode
+        cc.last_keydown
+            && cc.last_keycode == keycode
+            && (cc.prev_keycode != cc.last_keycode || cc.prev_keydown != cc.last_keydown)
+    })
+}
+
+pub fn key_just_released(keycode: Keycode) -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| {
+        !cc.last_keydown
+            && cc.last_keycode == keycode
+            && (cc.prev_keycode != cc.last_keycode || cc.prev_keydown != cc.last_keydown)
     })
 }
 
