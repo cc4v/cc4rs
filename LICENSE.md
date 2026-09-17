@@ -1,6 +1,6 @@
 cc4rs is released under [MPL-2.0](LICENSE_MPL2).
 
-However, as an exception for **example codes** (under `examples`), you can copy, modify or publish your codes (artworks or add-ons) based on examples, in any licenses as you like, only if you don't modify core (under `src`) code of cc4rs itself.
+Exception for **example codes** (under `examples`): You can copy, modify or publish your codes (artworks or add-ons) based on examples, in any licenses as you like, only if you don't modify core (under `src`) code of cc4rs itself.
 
 Some code bases reference [openFrameworks source code](https://github.com/openframeworks/openFrameworks), and [Processing API Reference](https://processing.org/reference/) (for API naming rules and calling conventions), in order to keep compatibility. And affected by [Ebitengine (v2)](https://github.com/hajimehoshi/ebiten)
 
