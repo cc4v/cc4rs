@@ -3,7 +3,8 @@
 Creative Coding framework in Rust language (using Sokol framework)
 
 > [!Warning]
-> Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
+> - Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
+> - Current state is very experimental. Please consider to use nannou as an alternative.
 
 ## License
 
