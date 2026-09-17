@@ -7,6 +7,7 @@ use std::ffi;
 use sokol::{app as sapp, gfx as sg, glue as sglue};
 
 pub type rawptr = *mut ffi::c_void;
+pub const NULLPTR: rawptr = std::ptr::null_mut();
 pub type FnCb_WithPtr = fn(rawptr);
 pub type FnCb_WithNoPtr = fn();
 
@@ -105,16 +106,16 @@ fn setup(config: CCConfig){
 
 }
 
-pub fn run(draw_fn: DrawFn) {
+pub fn run(draw_fn: FnCb_WithNoPtr) {
     setup(CCConfig {
-        draw_fn: Some(draw_fn),
-        user_data: std::ptr::null_mut(),
+        draw_fn: Some(FnCb::FnCb_WithNoPtr(draw_fn)),
+        user_data: NULLPTR,
     });
 }
 
-pub fn run_with_data(draw_fn: DrawFn, user_data: rawptr) {
+pub fn run_with_data(draw_fn: FnCb_WithPtr, user_data: rawptr) {
     setup(CCConfig {
-        draw_fn: Some(draw_fn),
+        draw_fn: Some(FnCb::FnCb_WithPtr(draw_fn)),
         user_data,
     });
 }
@@ -122,12 +123,12 @@ pub fn run_with_data(draw_fn: DrawFn, user_data: rawptr) {
 #[macro_export]
 macro_rules! run {
     ($draw_fn:expr) => {
-        $crate::run($crate::FnCb::FnCb_WithNoPtr($draw_fn as $crate::FnCb_WithNoPtr))
+        $crate::run($draw_fn as $crate::FnCb_WithNoPtr)
     };
     ($draw_fn:expr, $user_data:expr) => {
         $crate::run_with_data(
-            $crate::FnCb::FnCb_WithPtr($draw_fn as $crate::FnCb_WithPtr),
-            $user_data
+            $draw_fn as $crate::FnCb_WithPtr,
+            $user_data as rawptr
         )
     };
 }
