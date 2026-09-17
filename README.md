@@ -4,6 +4,8 @@
 
 Creative Coding framework in Rust language (using [Sokol framework](https://github.com/floooh/sokol-rust/))
 
+Aiming to provide APIs like [openFrameworks](https://openframeworks.cc/documentation/) or [Processing](https://processing.org/reference) on top of [Sokol](https://github.com/floooh/sokol) framework ([sokol-odin](https://github.com/floooh/sokol-odin/)), with a little essence of [Ebitengine](https://ebitengine.org/).
+
 > [!Warning]
 > - Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
 > - Current state is at **early stage** (APIs may change). Please consider to use [nannou](https://github.com/nannou-org/nannou) as an alternative at first.
