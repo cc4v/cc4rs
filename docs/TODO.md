@@ -2,6 +2,11 @@
 
 Remaining differences from the Odin implementation.
 
+## Features
+
+- Matrix
+- Image
+
 ## Deferred
 
 - Additional fonts for text rendering.
