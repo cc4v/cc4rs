@@ -2,15 +2,13 @@
 
 現在の実装で残っている、Odin 版との差分
 
-## 次に手を入れる候補
+## 次の作業候補
 
 - `frame` の描画前後における matrix と style の push/pop
 - `init_pipeline` の移植と alpha / additive pipeline の利用
 - `data` と `set_data`
 - `PREV_SIZE` を使ったウィンドウサイズ変更への対応
 - フルスクリーン設定の反映
-
-## 描画 API
 
 ## 入力
 
