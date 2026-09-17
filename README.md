@@ -6,6 +6,17 @@ Creative Coding framework in Rust language (using Sokol framework)
 > - Ported from [odin-cc](https://github.com/cc4v/odin-cc/), partially using GitHub Copilot (AI), so please use with care.
 > - Current state is **very experimental**. Please consider to use [nannou](https://github.com/nannou-org/nannou) as an alternative.
 
+## Examples
+
+```bash
+# for example:
+cargo run --example logo_icon
+
+# `cargo run --example` will show list of examples
+```
+
+![cc4rs logo example](docs/screenshot_logo.png)
+
 ## License
 
 - Files under `externals` are submodules to each other projects:

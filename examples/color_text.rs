@@ -1,19 +1,19 @@
-use cc4rs as cc;
+use cc4rs::*;
 
 fn main() {
-    cc::run(draw);
+    run(draw);
 }
 
 fn draw() {
-    cc::text_size(10);
-    cc::set_color(cc::colors::red());
-    cc::text("hello", 10.0, 10.0);
+    text_size(10);
+    set_color(colors::red());
+    text("hello", 10.0, 10.0);
 
-    cc::text_size(20);
-    cc::set_color(cc::colors::green());
-    cc::text("hello", 10.0, 40.0);
+    text_size(20);
+    set_color(colors::green());
+    text("hello", 10.0, 40.0);
 
-    cc::text_size(30);
-    cc::set_color(cc::colors::blue());
-    cc::text("hello", 10.0, 80.0);
+    text_size(30);
+    set_color(colors::blue());
+    text("hello", 10.0, 80.0);
 }

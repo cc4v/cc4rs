@@ -1,15 +1,15 @@
-use cc4rs as cc;
+use cc4rs::*;
 
 fn main() {
-    cc::run(draw);
+    run(draw);
 }
 
 fn draw() {
-    cc::fill();
-    cc::set_color(cc::colors::red());
-    cc::rect(20.0, 20.0, 100.0, 100.0);
+    fill();
+    set_color(colors::red());
+    rect(20.0, 20.0, 100.0, 100.0);
 
-    cc::no_fill();
-    cc::set_color(cc::colors::blue());
-    cc::rect(10.0, 10.0, 100.0, 100.0);
+    no_fill();
+    set_color(colors::blue());
+    rect(10.0, 10.0, 100.0, 100.0);
 }

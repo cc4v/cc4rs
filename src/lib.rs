@@ -14,6 +14,8 @@ use std::{
 };
 
 pub mod colors;
+pub mod image;
+pub mod matrix;
 mod push_pop;
 pub mod shape;
 pub mod text;
@@ -22,6 +24,8 @@ pub mod types;
 pub use push_pop::*;
 pub use shape::*;
 pub use text::*;
+pub use image::*;
+pub use matrix::*;
 
 use crate::colors::color_from_rgba;
 

@@ -7,3 +7,4 @@ edition = "2024"
 # sokol = "0.3.0"
 sokol = { path = "./externals/sokol-rust", version = "0.1" }
 stack-stack = "0.1.0"
+image = "0.25"

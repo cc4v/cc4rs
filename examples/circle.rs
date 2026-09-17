@@ -1,18 +1,18 @@
-use cc4rs as cc;
+use cc4rs::*;
 
 fn main() {
-    cc::run(draw);
+    run(draw);
 }
 
 fn draw() {
-    let x = cc::mouse_x();
-    let y = cc::mouse_y();
+    let x = mouse_x();
+    let y = mouse_y();
 
-    cc::fill();
-    cc::set_color(cc::colors::red());
-    cc::circle(x, y, 100.0);
+    fill();
+    set_color(colors::red());
+    circle(x, y, 100.0);
 
-    cc::no_fill();
-    cc::set_color(cc::colors::blue());
-    cc::circle(x + 20.0, y + 20.0, 100.0);
+    no_fill();
+    set_color(colors::blue());
+    circle(x + 20.0, y + 20.0, 100.0);
 }
