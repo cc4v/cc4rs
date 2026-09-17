@@ -2,8 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use std::ffi;
-use std::cell::LazyCell;
+use std::{ffi, sync::{LazyLock, Mutex}};
 use sokol::{app as sapp, gfx as sg, glue as sglue};
 
 pub mod types;
@@ -12,8 +11,11 @@ pub type Vector2<T> = crate::types::vector::Vector2<T>;
 pub type Vector3<T> = crate::types::vector::Vector3<T>;
 pub type Color = crate::types::color::Color;
 
-pub type RawPtr = *mut ffi::c_void;
-pub const NULLPTR: RawPtr = std::ptr::null_mut();
+// pub type RawPtr = *mut ffi::c_void;
+// pub const NULLPTR: RawPtr = std::ptr::null_mut();
+
+pub type RawPtr = usize;
+pub const NULLPTR: RawPtr = 0;
 
 pub type Modifiers = u32;
 
@@ -81,7 +83,7 @@ pub enum FnUnClick {
 pub type DrawFn = FnCb;
 
 #[derive(Default)]
-struct CCConfig  {
+pub struct CCConfig  {
 	pub init_fn:      Option<FnCb>,
 	pub update_fn:    Option<FnCb>,
 	pub draw_fn:      Option<FnCb>,
@@ -114,7 +116,7 @@ pub struct InitialPreference<'a> {
 
 #[derive(Default)]
 pub struct CCContext<'a, 'b> {
-	pub cc:  &'a CC,
+	pub cc:  Option<&'a CC>,
 	pub pref: InitialPreference<'b>
 }
 
@@ -124,81 +126,16 @@ pub struct CC {
 	// state:          ^CCState,
 }
 
-static G_CTX: LazyCell<CCContext> = LazyCell::new(|| {
-    CCContext{}
+static G_CTX: LazyLock<Mutex<CCContext<'static, 'static>>> = LazyLock::new(|| {
+    Mutex::new(CCContext::default())
 });
 
-
-// struct State {
-//     pass_action: sg::PassAction,
-// }
-
-// extern "C" fn init(user_data: *mut ffi::c_void) {
-//     let state = unsafe { &mut *(user_data as *mut State) };
-
-//     sg::setup(&sg::Desc {
-//         environment: sglue::environment(),
-//         logger: sg::Logger { func: Some(sokol::log::slog_func), ..Default::default() },
-//         ..Default::default()
-//     });
-
-//     state.pass_action.colors[0] = sg::ColorAttachmentAction {
-//         load_action: sg::LoadAction::Clear,
-//         clear_value: sg::Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 },
-//         ..Default::default()
-//     };
-
-//     let backend = sg::query_backend();
-//     match &backend {
-//         sg::Backend::Glcore | sg::Backend::Gles3 => {
-//             println!("Using GL Backend!");
-//             println!("Specifically the {:?} backend!", backend);
-//         },
-
-//         sg::Backend::D3d11 => {
-//             println!("Using D3d11 Backend!");
-//         },
-
-//         sg::Backend::MetalIos | sg::Backend::MetalMacos | sg::Backend::MetalSimulator => {
-//             println!("Using Metal Backend!");
-//             println!("Specifically the {:?} backend!", backend);
-//         },
-
-//         sg::Backend::Wgpu => {
-//             println!("Using Wgpu Backend!");
-//         },
-
-//         sg::Backend::Vulkan => {
-//             println!("Using Vulkan Backend!");
-//         },
-
-//         sg::Backend::Dummy => {
-//             println!("Using Dummy Backend!");
-//         },
-//     }
-// }
-
-// extern "C" fn frame(user_data: *mut ffi::c_void) {
-//     let state = unsafe { &mut *(user_data as *mut State) };
-
-//     let g = state.pass_action.colors[0].clear_value.g + 0.01;
-//     state.pass_action.colors[0].clear_value.g = if g > 1.0 { 0.0 } else { g };
-
-//     sg::begin_pass(&sg::Pass {
-//         action: state.pass_action,
-//         swapchain: sglue::swapchain(),
-//         ..Default::default()
-//     });
-//     sg::end_pass();
-//     sg::commit();
-// }
-
-fn get_context() -> &CCContext {
-    return &*G_CTX;
+fn get_context() -> std::sync::MutexGuard<'static, CCContext<'static, 'static>> {
+    G_CTX.lock().unwrap()
 }
 
-fn ctx() -> &CCContext {
-    return get_context();
+fn ctx() -> std::sync::MutexGuard<'static, CCContext<'static, 'static>> {
+    get_context()
 }
 
 // extern "C" fn cleanup(user_data: *mut ffi::c_void) {
