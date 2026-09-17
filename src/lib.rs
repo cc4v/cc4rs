@@ -2,14 +2,18 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use sokol::{app as sapp, gfx as sg, glue as sglue};
+use sokol::{app as sapp, gfx as sg, gl as sgl, glue as sglue};
+use stack_stack::Stack;
 use std::{
     ffi,
     sync::{LazyLock, Mutex},
 };
 
 pub mod colors;
+mod push_pop;
 pub mod types;
+
+pub use push_pop::*;
 
 pub type Vector2<T> = crate::types::Vector2<T>;
 pub type Vector3<T> = crate::types::Vector3<T>;
@@ -129,6 +133,32 @@ pub struct CCConfig {
 }
 
 #[derive(Default)]
+pub struct CCStyle {
+    pub color: Color, // = gg.black,
+    pub text_config: TextCfg,
+    pub fill: bool, // = true,
+    pub circle_resolution: i32,
+    pub sphere_resolution: i32, // = 32,
+    pub curve_resolution: i32,  // = 32
+}
+
+pub fn default_style() -> CCStyle {
+    return CCStyle {
+        color: colors::black(),
+        text_config: default_textcfg(),
+        fill: true,
+        circle_resolution: 32,
+        sphere_resolution: 32,
+        curve_resolution: 32,
+    };
+}
+
+pub struct CCPipelines {
+    pub alpha: sgl::Pipeline,
+    pub add: sgl::Pipeline,
+}
+
+#[derive(Default)]
 pub struct InitialPreference {
     pub size: Option<Vector2<i32>>,
     pub init_fn: Option<FnCb>,
@@ -146,6 +176,14 @@ pub struct InitialPreference {
 }
 
 #[derive(Default)]
+pub struct CCState {
+    pub pass_action: sg::PassAction,
+    pub tex_view: sg::View,
+    pub smp: sg::Sampler,
+    pub pip_3d: sgl::Pipeline,
+}
+
+#[derive(Default)]
 pub struct CCContext {
     pub cc: Option<&'static CC>,
     pub pref: InitialPreference,
@@ -154,7 +192,9 @@ pub struct CCContext {
 #[derive(Default)]
 pub struct CC {
     pub config: CCConfig,
-    // state:          ^CCState,
+    pub state: Option<&'static CCState>,
+    pub current_style: CCStyle,
+    pub style_history: Stack<CCStyle, CCMaxStyleHistory>,
 }
 
 static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| Mutex::new(CCContext::default()));
