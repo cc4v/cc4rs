@@ -266,8 +266,51 @@ fn end() {
     sg::commit();
 }
 
-extern "C" fn frame(user_data: *mut ffi::c_void) {
-    // TODO: implement
+extern "C" fn init(_user_data: *mut ffi::c_void) {
+    sg::setup(&sg::Desc {
+        environment: sglue::environment(),
+        logger: sg::Logger { func: Some(slog::slog_func), ..Default::default() },
+        ..Default::default()
+    });
+    sgl::setup(&sgl::Desc {
+        logger: sgl::Logger { func: Some(slog::slog_func), ..Default::default() },
+        ..Default::default()
+    });
+    sdtx::setup(&sdtx::Desc::default());
+
+    let cc = get_context()
+        .cc
+        .expect("cc context must be initialized before the init callback");
+    if let Some(callback) = &cc.config.init_fn {
+        match callback {
+            FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
+            FnCb::FnCbWithNoPtr(callback) => callback(),
+        }
+    }
+}
+
+extern "C" fn frame(_user_data: *mut ffi::c_void) {
+    let cc = get_context()
+        .cc
+        .expect("cc context must be initialized before the frame callback");
+
+    if let Some(callback) = &cc.config.update_fn {
+        match callback {
+            FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
+            FnCb::FnCbWithNoPtr(callback) => callback(),
+        }
+    }
+
+    begin();
+
+    if let Some(callback) = &cc.config.draw_fn {
+        match callback {
+            FnCb::FnCbWithPtr(callback) => callback(cc.config.user_data),
+            FnCb::FnCbWithNoPtr(callback) => callback(),
+        }
+    }
+
+    end();
 }
 
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
@@ -348,7 +391,7 @@ fn setup(config: CCConfig) {
     desc.height = height;
     desc.fullscreen = preference.fullscreen;
     desc.window_title = cc.window_title_cstr.as_ptr();
-    // init_userdata_cb = Some(init),
+    desc.init_userdata_cb = Some(init);
     desc.frame_userdata_cb = Some(frame);
     // event_userdata_cb = Some(_on_event),
     // cleanup_userdata_cb = Some(cleanup),
