@@ -1,0 +1,8 @@
+[package]
+name = "cc4rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# sokol = "0.3.0"
+sokol = { path = "./externals/sokol-rust", version = "0.1" }
