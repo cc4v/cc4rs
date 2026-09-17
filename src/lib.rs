@@ -303,6 +303,36 @@ pub fn on_event(event_fn: FnEvent) {
     ctx.pref.event_fn = Some(event_fn)
 }
 
+pub fn on_exit(exit_fn: FnCb) {
+    let mut ctx = get_context();
+    ctx.pref.cleanup_fn = Some(exit_fn)
+}
+
+pub fn on_key_pressed(keydown_fn: FnKeyDown) {
+    let mut ctx = get_context();
+    ctx.pref.keydown_fn = Some(keydown_fn)
+}
+
+pub fn on_key_released(keyup_fn: FnKeyUp) {
+    let mut ctx = get_context();
+    ctx.pref.keyup_fn = Some(keyup_fn)
+}
+
+pub fn on_mouse_pressed(click_fn: FnClick) {
+    let mut ctx = get_context();
+    ctx.pref.click_fn = Some(click_fn)
+}
+
+pub fn on_mouse_released(unclick_fn: FnUnClick) {
+    let mut ctx = get_context();
+    ctx.pref.unclick_fn = Some(unclick_fn)
+}
+
+pub fn on_mouse_moved(move_fn: FnMove) {
+    let mut ctx = get_context();
+    ctx.pref.move_fn = Some(move_fn)
+}
+
 pub fn run(draw_fn: FnCbWithNoPtr) {
     setup(CCConfig {
         draw_fn: Some(FnCb::FnCbWithNoPtr(draw_fn)),
