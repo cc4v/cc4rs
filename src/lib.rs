@@ -11,6 +11,17 @@ pub const NULLPTR: RawPtr = std::ptr::null_mut();
 
 pub type Modifiers = u32;
 
+#[repr(u16)]
+enum Modifier {
+    SHIFT = 1,
+    CTRL = 2,
+    ALT = 4,
+    SUPER = 8,
+    LMB = 256,
+    RMB = 512,
+    MMB = 1024
+}
+
 pub type FnCbWithPtr = fn(RawPtr);
 pub type FnCbWithNoPtr = fn();
 pub type FnMoveWithPtr = fn(f32, f32, RawPtr);
