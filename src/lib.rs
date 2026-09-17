@@ -315,6 +315,8 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     begin();
 
     text::init_frame();
+    push_matrix();
+    push_style();
 
     let draw = {
         let context = ctx();
@@ -325,6 +327,8 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     };
     invoke_callback(draw.0, draw.1);
 
+    pop_style();
+    pop_matrix();
     end();
 
     with_current_cc(|cc| {
@@ -480,6 +484,10 @@ extern "C" fn event(event: *const sapp::Event, _user_data: *mut ffi::c_void) {
         cc.last_mousebutton = event.mouse_button;
         cc.last_mousedown = false;
     }
+    if event._type == sapp::EventType::Resized {
+        cc.width = event.window_width.max(0) as usize;
+        cc.height = event.window_height.max(0) as usize;
+    }
     }) else {
         return;
     };
@@ -618,6 +626,22 @@ pub fn on_mouse_released(unclick_fn: FnUnClick) {
 pub fn on_mouse_moved(move_fn: FnMove) {
     let mut ctx = get_context();
     ctx.pref.move_fn = Some(move_fn)
+}
+
+pub fn data() -> RawPtr {
+    get_context()
+        .cc
+        .as_ref()
+        .map_or(NULLPTR, |cc| cc.config.user_data)
+}
+
+pub fn set_data(user_data: RawPtr) {
+    let mut context = get_context();
+    if let Some(cc) = context.cc.as_mut() {
+        cc.config.user_data = user_data;
+    } else {
+        context.pref.user_data = user_data;
+    }
 }
 
 pub fn mouse_x() -> f32 {
