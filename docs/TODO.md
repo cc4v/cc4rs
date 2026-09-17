@@ -12,13 +12,7 @@
 
 ## 描画 API
 
-`shape.odin` にある以下の API は未移植。
-
-- line
-- square
-- circle
-- 塗りつぶしと枠線の円
-- text
+`shape.odin` では text が未移植。
 
 ## 入力
 

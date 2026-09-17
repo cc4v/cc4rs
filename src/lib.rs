@@ -613,6 +613,14 @@ pub fn on_mouse_moved(move_fn: FnMove) {
     ctx.pref.move_fn = Some(move_fn)
 }
 
+pub fn mouse_x() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_x)
+}
+
+pub fn mouse_y() -> f32 {
+    get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_y)
+}
+
 #[macro_export]
 macro_rules! on_init {
     ($callback:expr) => {
