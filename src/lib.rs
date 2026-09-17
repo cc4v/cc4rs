@@ -109,7 +109,7 @@ pub struct InitialPreference {
 	pub unclick_fn:   Option<FnUnClick>,
 	pub move_fn:      Option<FnMove>,
 	pub bg_color:     Option<Color>,
-	pub title:        &'static str, // = "Canvas"
+	pub title:        String, // = "Canvas"
 	pub fullscreen:   bool,
 	pub user_data:    RawPtr
 }
