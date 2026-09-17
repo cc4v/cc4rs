@@ -6,8 +6,8 @@ fn main() {
 }
 
 fn draw() {
-    let width = sapp_width() as f32;
-    let height = sapp_height() as f32;
+    let width = width() as f32;
+    let height = height() as f32;
 
     let a = colors::color_u8_from_rgb(100, 250, 154);
     let b = colors::color_u8_from_rgb(247, 253, 236);
@@ -27,12 +27,4 @@ fn draw() {
     text_size(14);
     text("creative coding framework", 30.0, 200.0);
     text("for Rust", 30.0, 230.0);
-}
-
-fn sapp_width() -> i32 {
-    sokol::app::width()
-}
-
-fn sapp_height() -> i32 {
-    sokol::app::height()
 }
