@@ -3,8 +3,14 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 use std::ffi;
-
+use std::cell::LazyCell;
 use sokol::{app as sapp, gfx as sg, glue as sglue};
+
+pub mod types;
+
+pub type Vector2<T> = crate::types::vector::Vector2<T>;
+pub type Vector3<T> = crate::types::vector::Vector3<T>;
+pub type Color = crate::types::color::Color;
 
 pub type RawPtr = *mut ffi::c_void;
 pub const NULLPTR: RawPtr = std::ptr::null_mut();
@@ -76,18 +82,52 @@ pub type DrawFn = FnCb;
 
 #[derive(Default)]
 struct CCConfig  {
-	init_fn:      Option<FnCb>,
-	update_fn:    Option<FnCb>,
-	draw_fn:      Option<FnCb>,
-	cleanup_fn:   Option<FnCb>,
-	event_fn:     Option<FnEvent>,
-	keydown_fn:   Option<FnKeyDown>,
-	keyup_fn:     Option<FnKeyUp>,
-	click_fn:     Option<FnClick>,
-	unclick_fn:   Option<FnUnClick>,
-	move_fn:      Option<FnMove>,
-	user_data:    RawPtr,
+	pub init_fn:      Option<FnCb>,
+	pub update_fn:    Option<FnCb>,
+	pub draw_fn:      Option<FnCb>,
+	pub cleanup_fn:   Option<FnCb>,
+	pub event_fn:     Option<FnEvent>,
+	pub keydown_fn:   Option<FnKeyDown>,
+	pub keyup_fn:     Option<FnKeyUp>,
+	pub click_fn:     Option<FnClick>,
+	pub unclick_fn:   Option<FnUnClick>,
+	pub move_fn:      Option<FnMove>,
+	pub user_data:    RawPtr,
 }
+
+#[derive(Default)]
+pub struct InitialPreference<'a> {
+    pub size:         Option<Vector2<i32>>,
+	pub init_fn:      Option<FnCb>,
+	pub cleanup_fn:   Option<FnCb>,
+	pub event_fn:     Option<FnEvent>,
+	pub keydown_fn:   Option<FnKeyDown>,
+	pub keyup_fn:     Option<FnKeyUp>,
+	pub click_fn:     Option<FnClick>,
+	pub unclick_fn:   Option<FnUnClick>,
+	pub move_fn:      Option<FnMove>,
+	pub bg_color:     Option<Color>,
+	pub title:        &'a str, // = "Canvas"
+	pub fullscreen:   bool,
+	pub user_data:    RawPtr
+}
+
+#[derive(Default)]
+pub struct CCContext<'a, 'b> {
+	pub cc:  &'a CC,
+	pub pref: InitialPreference<'b>
+}
+
+#[derive(Default)]
+pub struct CC {
+    pub config:         CCConfig,
+	// state:          ^CCState,
+}
+
+static G_CTX: LazyCell<CCContext> = LazyCell::new(|| {
+    CCContext{}
+});
+
 
 // struct State {
 //     pass_action: sg::PassAction,
@@ -153,6 +193,14 @@ struct CCConfig  {
 //     sg::commit();
 // }
 
+fn get_context() -> &CCContext {
+    return &*G_CTX;
+}
+
+fn ctx() -> &CCContext {
+    return get_context();
+}
+
 // extern "C" fn cleanup(user_data: *mut ffi::c_void) {
 //     sg::shutdown();
 
@@ -160,7 +208,7 @@ struct CCConfig  {
 // }
 
 fn setup(config: CCConfig){
-
+    let ctx = ctx();
 }
 
 pub fn run(draw_fn: FnCbWithNoPtr) {
