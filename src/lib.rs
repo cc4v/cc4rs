@@ -11,9 +11,36 @@ use std::{
 pub mod colors;
 pub mod types;
 
-pub type Vector2<T> = crate::types::vector::Vector2<T>;
-pub type Vector3<T> = crate::types::vector::Vector3<T>;
-pub type Color = crate::types::color::Color;
+pub type Vector2<T> = crate::types::Vector2<T>;
+pub type Vector3<T> = crate::types::Vector3<T>;
+pub type Color = crate::types::Color;
+pub type ColorU8 = crate::types::ColorU8;
+
+pub fn u8_color(c: Color) -> ColorU8 {
+    return crate::colors::u8_color(c);
+}
+
+pub fn f32_color(c: ColorU8) -> Color {
+    return crate::colors::f32_color(c);
+}
+
+pub fn default_color() -> Color {
+    return crate::types::color::default_color();
+}
+
+pub fn default_color_u8() -> ColorU8 {
+    return crate::types::color::default_color_u8();
+}
+
+pub type TextCfg = crate::types::TextCfg;
+
+pub fn default_textcfg() -> TextCfg {
+    crate::types::default_textcfg()
+}
+
+pub type Event = sapp::Event;
+pub type Keycode = sapp::Keycode;
+pub type Mousebutton = sapp::Mousebutton;
 
 // pub type RawPtr = *mut ffi::c_void;
 // pub const NULLPTR: RawPtr = std::ptr::null_mut();
