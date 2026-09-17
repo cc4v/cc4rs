@@ -1,5 +1,9 @@
 use cc4rs as cc;
 
 fn main(){
-   cc::run();
+   cc::run!(draw);
+}
+
+fn draw(){
+
 }
