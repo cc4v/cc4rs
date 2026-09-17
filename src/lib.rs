@@ -652,6 +652,16 @@ pub fn mouse_y() -> f32 {
     get_context().cc.as_ref().map_or(0.0, |cc| cc.mouse_y)
 }
 
+pub fn key_just_pressed(keycode: Keycode) -> bool {
+    get_context().cc.as_ref().is_some_and(|cc| {
+        cc.last_keydown && !cc.prev_keydown && cc.last_keycode == keycode
+    })
+}
+
+pub fn toggle_fullscreen() {
+    sapp::toggle_fullscreen();
+}
+
 #[macro_export]
 macro_rules! on_init {
     ($callback:expr) => {
