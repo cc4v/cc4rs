@@ -6,30 +6,76 @@ use std::ffi;
 
 use sokol::{app as sapp, gfx as sg, glue as sglue};
 
-pub type rawptr = *mut ffi::c_void;
-pub const NULLPTR: rawptr = std::ptr::null_mut();
-pub type FnCb_WithPtr = fn(rawptr);
-pub type FnCb_WithNoPtr = fn();
+pub type RawPtr = *mut ffi::c_void;
+pub const NULLPTR: RawPtr = std::ptr::null_mut();
+
+pub type Modifiers = u32;
+
+pub type FnCbWithPtr = fn(RawPtr);
+pub type FnCbWithNoPtr = fn();
+pub type FnMoveWithPtr = fn(f32, f32, RawPtr);
+pub type FnMoveWithNoPtr = fn(f32, f32);
+pub type FnEventWithPtr = fn(&sapp::Event, RawPtr);
+pub type FnEventWithNoPtr = fn(&sapp::Event);
+pub type FnKeyDownWithPtr = fn(sapp::Keycode, Modifiers, RawPtr);
+pub type FnKeyDownWithNoPtr = fn(sapp::Keycode, Modifiers);
+pub type FnKeyUpWithPtr = fn(sapp::Keycode, Modifiers, RawPtr);
+pub type FnKeyUpWithNoPtr = fn(sapp::Keycode, Modifiers);
+pub type FnClickWithPtr = fn(f32, f32, sapp::Mousebutton, RawPtr);
+pub type FnClickWithNoPtr = fn(f32, f32, sapp::Mousebutton);
+pub type FnUnClickWithPtr = fn(f32, f32, sapp::Mousebutton, RawPtr);
+pub type FnUnClickWithNoPtr = fn(f32, f32, sapp::Mousebutton);
 
 pub enum FnCb {
-    FnCb_WithPtr(FnCb_WithPtr),
-    FnCb_WithNoPtr(FnCb_WithNoPtr)
+    FnCbWithPtr(FnCbWithPtr),
+    FnCbWithNoPtr(FnCbWithNoPtr)
+}
+
+pub enum FnEvent {
+    FnEventWithPtr(FnEventWithPtr),
+    FnEventWithNoPtr(FnEventWithNoPtr)
+}
+
+pub enum FnMove {
+    FnMoveWithPtr(FnMoveWithPtr),
+    FnMoveWithNoPtr(FnMoveWithNoPtr)
+}
+
+pub enum FnKeyDown {
+    FnKeyDownWithPtr(FnKeyDownWithPtr),
+    FnKeyDownWithNoPtr(FnKeyDownWithNoPtr)
+}
+
+pub enum FnKeyUp {
+    FnKeyUpWithPtr(FnKeyUpWithPtr),
+    FnKeyUpWithNoPtr(FnKeyUpWithNoPtr)
+}
+
+pub enum FnClick {
+    FnClickWithPtr(FnClickWithPtr),
+    FnClickWithNoPtr(FnClickWithNoPtr)
+}
+
+pub enum FnUnClick {
+    FnUnClickWithPtr(FnUnClickWithPtr),
+    FnUnClickWithNoPtr(FnUnClickWithNoPtr)
 }
 
 pub type DrawFn = FnCb;
 
+#[derive(Default)]
 struct CCConfig  {
-	// init_fn:      Option<FnCb>,
-	// update_fn:    Option<FnCb>,
+	init_fn:      Option<FnCb>,
+	update_fn:    Option<FnCb>,
 	draw_fn:      Option<FnCb>,
-	// cleanup_fn:   Option<FnCb>,
-	// event_fn:     Option<FnEvent>,
-	// keydown_fn:   Option<FnKeyDown>,
-	// keyup_fn:     Option<FnKeyUp>,
-	// click_fn:     Option<FnClick>,
-	// unclick_fn:   Option<FnUnClick>,
-	// move_fn:      Option<FnMove>,
-	user_data:    rawptr,
+	cleanup_fn:   Option<FnCb>,
+	event_fn:     Option<FnEvent>,
+	keydown_fn:   Option<FnKeyDown>,
+	keyup_fn:     Option<FnKeyUp>,
+	click_fn:     Option<FnClick>,
+	unclick_fn:   Option<FnUnClick>,
+	move_fn:      Option<FnMove>,
+	user_data:    RawPtr,
 }
 
 // struct State {
@@ -106,28 +152,30 @@ fn setup(config: CCConfig){
 
 }
 
-pub fn run(draw_fn: FnCb_WithNoPtr) {
+pub fn run(draw_fn: FnCbWithNoPtr) {
     setup(CCConfig {
-        draw_fn: Some(FnCb::FnCb_WithNoPtr(draw_fn)),
+        draw_fn: Some(FnCb::FnCbWithNoPtr(draw_fn)),
         user_data: NULLPTR,
+        ..Default::default()
     });
 }
 
-pub fn run_with_data(draw_fn: FnCb_WithPtr, user_data: rawptr) {
+pub fn run_with_data(draw_fn: FnCbWithPtr, user_data: RawPtr) {
     setup(CCConfig {
-        draw_fn: Some(FnCb::FnCb_WithPtr(draw_fn)),
+        draw_fn: Some(FnCb::FnCbWithPtr(draw_fn)),
         user_data,
+        ..Default::default()
     });
 }
 
 #[macro_export]
 macro_rules! run {
     ($draw_fn:expr) => {
-        $crate::run($draw_fn as $crate::FnCb_WithNoPtr)
+        $crate::run($draw_fn as $crate::FnCbWithNoPtr)
     };
     ($draw_fn:expr, $user_data:expr) => {
         $crate::run_with_data(
-            $draw_fn as $crate::FnCb_WithPtr,
+            $draw_fn as $crate::FnCbWithPtr,
             $user_data as rawptr
         )
     };
