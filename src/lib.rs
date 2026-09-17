@@ -781,12 +781,18 @@ macro_rules! on_init {
     ($callback:expr) => {
         $crate::on_init($crate::FnCb::FnCbWithNoPtr($callback))
     };
+    ($callback:expr, with_data) => {
+        $crate::on_init($crate::FnCb::FnCbWithPtr($callback))
+    };
 }
 
 #[macro_export]
 macro_rules! on_exit {
     ($callback:expr) => {
         $crate::on_exit($crate::FnCb::FnCbWithNoPtr($callback))
+    };
+    ($callback:expr, with_data) => {
+        $crate::on_exit($crate::FnCb::FnCbWithPtr($callback))
     };
 }
 
@@ -795,12 +801,18 @@ macro_rules! on_key_pressed {
     ($callback:expr) => {
         $crate::on_key_pressed($crate::FnKeyDown::FnKeyDownWithNoPtr($callback))
     };
+    ($callback:expr, with_data) => {
+        $crate::on_key_pressed($crate::FnKeyDown::FnKeyDownWithPtr($callback))
+    };
 }
 
 #[macro_export]
 macro_rules! on_key_released {
     ($callback:expr) => {
         $crate::on_key_released($crate::FnKeyUp::FnKeyUpWithNoPtr($callback))
+    };
+    ($callback:expr, with_data) => {
+        $crate::on_key_released($crate::FnKeyUp::FnKeyUpWithPtr($callback))
     };
 }
 
@@ -809,6 +821,9 @@ macro_rules! on_mouse_pressed {
     ($callback:expr) => {
         $crate::on_mouse_pressed($crate::FnClick::FnClickWithNoPtr($callback))
     };
+    ($callback:expr, with_data) => {
+        $crate::on_mouse_pressed($crate::FnClick::FnClickWithPtr($callback))
+    };
 }
 
 #[macro_export]
@@ -816,12 +831,18 @@ macro_rules! on_mouse_released {
     ($callback:expr) => {
         $crate::on_mouse_released($crate::FnUnClick::FnUnClickWithNoPtr($callback))
     };
+    ($callback:expr, with_data) => {
+        $crate::on_mouse_released($crate::FnUnClick::FnUnClickWithPtr($callback))
+    };
 }
 
 #[macro_export]
 macro_rules! on_mouse_moved {
     ($callback:expr) => {
         $crate::on_mouse_moved($crate::FnMove::FnMoveWithNoPtr($callback))
+    };
+    ($callback:expr, with_data) => {
+        $crate::on_mouse_moved($crate::FnMove::FnMoveWithPtr($callback))
     };
 }
 
