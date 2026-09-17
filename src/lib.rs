@@ -2,11 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use std::{ffi, sync::{LazyLock, Mutex}};
 use sokol::{app as sapp, gfx as sg, glue as sglue};
+use std::{
+    ffi,
+    sync::{LazyLock, Mutex},
+};
 
-pub mod types;
 pub mod colors;
+pub mod types;
 
 pub type Vector2<T> = crate::types::vector::Vector2<T>;
 pub type Vector3<T> = crate::types::vector::Vector3<T>;
@@ -28,7 +31,7 @@ enum Modifier {
     SUPER = 8,
     LMB = 256,
     RMB = 512,
-    MMB = 1024
+    MMB = 1024,
 }
 
 pub type FnCbWithPtr = fn(RawPtr);
@@ -48,88 +51,86 @@ pub type FnUnClickWithNoPtr = fn(f32, f32, sapp::Mousebutton);
 
 pub enum FnCb {
     FnCbWithPtr(FnCbWithPtr),
-    FnCbWithNoPtr(FnCbWithNoPtr)
+    FnCbWithNoPtr(FnCbWithNoPtr),
 }
 
 pub enum FnEvent {
     FnEventWithPtr(FnEventWithPtr),
-    FnEventWithNoPtr(FnEventWithNoPtr)
+    FnEventWithNoPtr(FnEventWithNoPtr),
 }
 
 pub enum FnMove {
     FnMoveWithPtr(FnMoveWithPtr),
-    FnMoveWithNoPtr(FnMoveWithNoPtr)
+    FnMoveWithNoPtr(FnMoveWithNoPtr),
 }
 
 pub enum FnKeyDown {
     FnKeyDownWithPtr(FnKeyDownWithPtr),
-    FnKeyDownWithNoPtr(FnKeyDownWithNoPtr)
+    FnKeyDownWithNoPtr(FnKeyDownWithNoPtr),
 }
 
 pub enum FnKeyUp {
     FnKeyUpWithPtr(FnKeyUpWithPtr),
-    FnKeyUpWithNoPtr(FnKeyUpWithNoPtr)
+    FnKeyUpWithNoPtr(FnKeyUpWithNoPtr),
 }
 
 pub enum FnClick {
     FnClickWithPtr(FnClickWithPtr),
-    FnClickWithNoPtr(FnClickWithNoPtr)
+    FnClickWithNoPtr(FnClickWithNoPtr),
 }
 
 pub enum FnUnClick {
     FnUnClickWithPtr(FnUnClickWithPtr),
-    FnUnClickWithNoPtr(FnUnClickWithNoPtr)
+    FnUnClickWithNoPtr(FnUnClickWithNoPtr),
 }
 
 pub type DrawFn = FnCb;
 
 #[derive(Default)]
-pub struct CCConfig  {
-	pub init_fn:      Option<FnCb>,
-	pub update_fn:    Option<FnCb>,
-	pub draw_fn:      Option<FnCb>,
-	pub cleanup_fn:   Option<FnCb>,
-	pub event_fn:     Option<FnEvent>,
-	pub keydown_fn:   Option<FnKeyDown>,
-	pub keyup_fn:     Option<FnKeyUp>,
-	pub click_fn:     Option<FnClick>,
-	pub unclick_fn:   Option<FnUnClick>,
-	pub move_fn:      Option<FnMove>,
-	pub user_data:    RawPtr,
+pub struct CCConfig {
+    pub init_fn: Option<FnCb>,
+    pub update_fn: Option<FnCb>,
+    pub draw_fn: Option<FnCb>,
+    pub cleanup_fn: Option<FnCb>,
+    pub event_fn: Option<FnEvent>,
+    pub keydown_fn: Option<FnKeyDown>,
+    pub keyup_fn: Option<FnKeyUp>,
+    pub click_fn: Option<FnClick>,
+    pub unclick_fn: Option<FnUnClick>,
+    pub move_fn: Option<FnMove>,
+    pub user_data: RawPtr,
 }
 
 #[derive(Default)]
 pub struct InitialPreference {
-    pub size:         Option<Vector2<i32>>,
-	pub init_fn:      Option<FnCb>,
-	pub cleanup_fn:   Option<FnCb>,
-	pub event_fn:     Option<FnEvent>,
-	pub keydown_fn:   Option<FnKeyDown>,
-	pub keyup_fn:     Option<FnKeyUp>,
-	pub click_fn:     Option<FnClick>,
-	pub unclick_fn:   Option<FnUnClick>,
-	pub move_fn:      Option<FnMove>,
-	pub bg_color:     Option<Color>,
-	pub title:        String, // = "Canvas"
-	pub fullscreen:   bool,
-	pub user_data:    RawPtr
+    pub size: Option<Vector2<i32>>,
+    pub init_fn: Option<FnCb>,
+    pub cleanup_fn: Option<FnCb>,
+    pub event_fn: Option<FnEvent>,
+    pub keydown_fn: Option<FnKeyDown>,
+    pub keyup_fn: Option<FnKeyUp>,
+    pub click_fn: Option<FnClick>,
+    pub unclick_fn: Option<FnUnClick>,
+    pub move_fn: Option<FnMove>,
+    pub bg_color: Option<Color>,
+    pub title: String, // = "Canvas"
+    pub fullscreen: bool,
+    pub user_data: RawPtr,
 }
 
 #[derive(Default)]
 pub struct CCContext {
-	pub cc:  Option<&'static CC>,
-	pub pref: InitialPreference,
+    pub cc: Option<&'static CC>,
+    pub pref: InitialPreference,
 }
 
 #[derive(Default)]
 pub struct CC {
-    pub config:         CCConfig,
-	// state:          ^CCState,
+    pub config: CCConfig,
+    // state:          ^CCState,
 }
 
-static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| {
-    Mutex::new(CCContext::default())
-});
+static G_CTX: LazyLock<Mutex<CCContext>> = LazyLock::new(|| Mutex::new(CCContext::default()));
 
 fn get_context() -> std::sync::MutexGuard<'static, CCContext> {
     G_CTX.lock().unwrap()
@@ -145,13 +146,13 @@ fn ctx() -> std::sync::MutexGuard<'static, CCContext> {
 //     let _ = unsafe { Box::from_raw(user_data as *mut State) };
 // }
 
-fn setup(config: CCConfig){
+fn setup(config: CCConfig) {
     let ctx = ctx();
 
     let w = 400;
     let h = 400;
 
-    let bg_color = colors::WHITE;
+    let bg_color = colors::white();
 }
 
 pub fn run(draw_fn: FnCbWithNoPtr) {
@@ -176,9 +177,6 @@ macro_rules! run {
         $crate::run($draw_fn as $crate::FnCbWithNoPtr)
     };
     ($draw_fn:expr, $user_data:expr) => {
-        $crate::run_with_data(
-            $draw_fn as $crate::FnCbWithPtr,
-            $user_data as rawptr
-        )
+        $crate::run_with_data($draw_fn as $crate::FnCbWithPtr, $user_data as rawptr)
     };
 }

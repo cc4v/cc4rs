@@ -40,11 +40,12 @@ pub fn color(r: u8, g: u8, b: u8, a :u8) -> Color {
     }
 }
 
-macro_rules! color {
-    ($r: expr, $g: expr, $b: expr) => {
-        color($r, $g, $b, 255)
-    };
-    ($r: expr, $g: expr, $b: expr, $a: expr) => {
-        color($r, $g, $b, $a)
-    };
-}
+// #[macro_export]
+// macro_rules! color {
+//     ($r: expr, $g: expr, $b: expr) => {
+//         $crate::types::color::get_color($r, $g, $b, 255)
+//     };
+//     ($r: expr, $g: expr, $b: expr, $a: expr) => {
+//         $crate::types::color::get_color($r, $g, $b, $a)
+//     };
+// }
