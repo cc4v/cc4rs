@@ -310,6 +310,14 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     });
 
     end();
+
+    with_current_cc(|cc| {
+        cc.prev_keycode = cc.last_keycode;
+        cc.prev_keydown = cc.last_keydown;
+        cc.prev_mousebutton = cc.last_mousebutton;
+        cc.prev_mousedown = cc.last_mousedown;
+        cc.prev_modifiers = cc.last_modifiers;
+    });
 }
 
 extern "C" fn cleanup(_user_data: *mut ffi::c_void) {
@@ -383,7 +391,10 @@ extern "C" fn event(event: *const sapp::Event, _user_data: *mut ffi::c_void) {
                 }
             }
         }
-        sapp::EventType::KeyDown => {
+        sapp::EventType::KeyDown
+            if !cc.last_keydown
+                || cc.last_keycode != event.key_code
+                || cc.last_modifiers != event.modifiers => {
             if let Some(callback) = &cc.config.keydown_fn {
                 match callback {
                     FnKeyDown::FnKeyDownWithPtr(callback) => {
@@ -395,7 +406,10 @@ extern "C" fn event(event: *const sapp::Event, _user_data: *mut ffi::c_void) {
                 }
             }
         }
-        sapp::EventType::KeyUp => {
+        sapp::EventType::KeyUp
+            if cc.last_keydown
+                || cc.last_keycode != event.key_code
+                || cc.last_modifiers != event.modifiers => {
             if let Some(callback) = &cc.config.keyup_fn {
                 match callback {
                     FnKeyUp::FnKeyUpWithPtr(callback) => {
