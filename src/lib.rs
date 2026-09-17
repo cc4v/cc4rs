@@ -146,6 +146,9 @@ fn ctx() -> std::sync::MutexGuard<'static, CCContext> {
 
 fn setup(config: CCConfig){
     let ctx = ctx();
+
+    let w = 400;
+    let h = 400;
 }
 
 pub fn run(draw_fn: FnCbWithNoPtr) {
