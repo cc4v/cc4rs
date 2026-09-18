@@ -1,6 +1,4 @@
 use cc4rs::*;
-use sokol::gfx as sg;
-
 #[path = "shader_demo/shader.rs"]
 mod shader_demo_shader;
 
@@ -17,9 +15,7 @@ struct Params {
 }
 
 struct State {
-    shader: Shader,
-    pipeline: sg::Pipeline,
-    bindings: sg::Bindings,
+    shader: ShaderRect,
 }
 
 static STATE: LazyLock<Mutex<Option<State>>> = LazyLock::new(|| Mutex::new(None));
@@ -31,24 +27,9 @@ fn main() {
 }
 
 fn setup() {
-    let shader = Shader::from_backend(shader_demo_shader::shader_demo_shader_desc);
-    let mut pipeline_desc = sg::PipelineDesc {
-        primitive_type: sg::PrimitiveType::TriangleStrip,
-        ..Default::default()
-    };
-    pipeline_desc.layout.attrs[shader_demo_shader::ATTR_SHADER_DEMO_POSITION].format =
-        sg::VertexFormat::Float2;
-    let pipeline = shader.make_pipeline(pipeline_desc);
-    let vertices: [f32; 8] = [-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0];
-    let mut bindings = sg::Bindings::default();
-    bindings.vertex_buffers[0] = sg::make_buffer(&sg::BufferDesc {
-        data: sg::slice_as_range(&vertices),
-        ..Default::default()
-    });
+    let shader = ShaderRect::from_backend(shader_demo_shader::shader_demo_shader_desc);
     *STATE.lock().unwrap() = Some(State {
         shader,
-        pipeline,
-        bindings,
     });
 }
 
@@ -63,16 +44,12 @@ fn draw() {
         height: height().max(1) as f32,
         _padding: 0.0,
     };
-    state.shader.begin(state.pipeline, &state.bindings);
+    state.shader.begin();
     state.shader.set_uniform(UB_FS_PARAMS, &params);
-    state.shader.draw(4);
+    state.shader.rect(0.0, 0.0, width() as f32, height() as f32);
     state.shader.end();
 }
 
 fn cleanup() {
-    if let Some(mut state) = STATE.lock().unwrap().take() {
-        sg::destroy_buffer(state.bindings.vertex_buffers[0]);
-        sg::destroy_pipeline(state.pipeline);
-        state.shader.destroy();
-    }
+    STATE.lock().unwrap().take();
 }

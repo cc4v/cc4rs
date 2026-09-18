@@ -28,7 +28,7 @@ pub use matrix::*;
 pub use push_pop::*;
 pub use shape::*;
 pub use shape_path::*;
-pub use shader::Shader;
+pub use shader::{Shader, ShaderRect};
 pub use text::*;
 
 use crate::colors::color_from_rgba;
