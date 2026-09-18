@@ -25,6 +25,13 @@ cargo run --example logo_icon
 # `cargo run --example` will show list of examples
 ```
 
+## Shader (demo)
+
+```bash
+./scripts/compile-shaders.sh
+cargo run --example shader_demo
+```
+
 ## Usage in your project (as a crate)
 
 In your Cargo.toml:

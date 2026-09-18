@@ -19,6 +19,7 @@ pub mod matrix;
 mod push_pop;
 pub mod shape;
 pub mod shape_path;
+pub mod shader;
 pub mod text;
 pub mod types;
 
@@ -27,6 +28,7 @@ pub use matrix::*;
 pub use push_pop::*;
 pub use shape::*;
 pub use shape_path::*;
+pub use shader::Shader;
 pub use text::*;
 
 use crate::colors::color_from_rgba;
@@ -273,11 +275,6 @@ fn begin() {
 }
 
 fn end() {
-    sg::begin_pass(&sg::Pass {
-        action: state().pass_action,
-        swapchain: sglue::swapchain(),
-        ..Default::default()
-    });
     sgl::draw(); // FIXME: position/layer
     sdtx::draw(); // FIXME: position/layer
     sg::end_pass();
@@ -345,6 +342,12 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
     invoke_callback(update.0, update.1);
 
     begin();
+
+    sg::begin_pass(&sg::Pass {
+        action: state().pass_action,
+        swapchain: sglue::swapchain(),
+        ..Default::default()
+    });
 
     text::init_frame();
     push_matrix();
