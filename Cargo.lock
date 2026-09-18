@@ -888,6 +888,7 @@ checksum = "ba467056f1b547ed52077911161fc86985becbc60e8e1857c8a144dab0def891"
 [[package]]
 name = "sokol"
 version = "0.1.0"
+source = "git+https://github.com/floooh/sokol-rust.git#30bf7168ddd8860d29fd85d5a75256bbca02f3d1"
 dependencies = [
  "cc",
 ]

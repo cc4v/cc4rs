@@ -32,9 +32,12 @@ In your Cargo.toml:
 ```toml
 cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
 
-# if you need sokol API also (need to match submodule revision ID):
-# sokol = { version="*", git="https://github.com/floooh/sokol-rust.git", rev="30bf716" }
+# if you need sokol API also:
+# sokol = { version="*", git="https://github.com/floooh/sokol-rust.git"}
 ```
+
+<!-- # if you need sokol API also (need to match the same Sokol revision ID):
+# sokol = { version="*", git="https://github.com/floooh/sokol-rust.git", rev="30bf716" } -->
 
 > [!Warning]
 > https://crates.io/crates/sokol (such as `crate add sokol`) is **different implementation** of Sokol framework which we are using.
@@ -43,6 +46,4 @@ cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
 
 ## License
 
-- Files under `externals` are submodules to each other projects:
-  - sokol-rust: https://github.com/floooh/sokol-rust/
-- Files under `src` and  `examples`, see [LICENSE.md](LICENSE.md)
+see [LICENSE.md](LICENSE.md)

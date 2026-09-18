@@ -1,3 +1,0 @@
-[submodule "externals/sokol-rust"]
-	path = externals/sokol-rust
-	url = https://github.com/floooh/sokol-rust
