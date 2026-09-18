@@ -1,4 +1,4 @@
-# cc4rs
+# cc4rs (creco) 
 
 <img alt="cc4rs logo example" src="docs/screenshot_logo.png" width="350px">
 
