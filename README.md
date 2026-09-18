@@ -27,6 +27,8 @@ cargo run --example logo_icon
 
 ## Use as crate
 
+In your Cargo.toml:
+
 ```
 cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
 sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
