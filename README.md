@@ -25,7 +25,7 @@ cargo run --example logo_icon
 # `cargo run --example` will show list of examples
 ```
 
-## Use as crate
+## Usage in your project (as a crate)
 
 In your Cargo.toml:
 
@@ -36,7 +36,10 @@ cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
 # sokol = { version="*", git="https://github.com/floooh/sokol-rust.git", rev="30bf716" }
 ```
 
-(Maybe register to crate.io later, but just maybe.)
+> [!Warning]
+> https://crates.io/crates/sokol (such as `crate add sokol`) is **different implementation** of Sokol framework which we are using.
+> 
+> Please use https://github.com/floooh/sokol-rust.git from git (not from crate.io.)
 
 ## License
 
