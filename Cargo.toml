@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-# sokol = "0.3.0"
+# sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
 sokol = { path = "./externals/sokol-rust", version = "0.1" }
 stack-stack = "0.1.0"
 image = "0.25"
