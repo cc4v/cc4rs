@@ -32,7 +32,7 @@ In your Cargo.toml:
 ```toml
 cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
 
-# if you need sokol API also:
+# if you need sokol API (such as Sokol GL) also:
 # sokol = { version="*", git="https://github.com/floooh/sokol-rust.git"}
 ```
 
