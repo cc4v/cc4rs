@@ -18,14 +18,16 @@ pub mod image;
 pub mod matrix;
 mod push_pop;
 pub mod shape;
+pub mod shape_path;
 pub mod text;
 pub mod types;
 
-pub use push_pop::*;
-pub use shape::*;
-pub use text::*;
 pub use image::*;
 pub use matrix::*;
+pub use push_pop::*;
+pub use shape::*;
+pub use shape_path::*;
+pub use text::*;
 
 use crate::colors::color_from_rgba;
 
@@ -302,11 +304,17 @@ fn init_pipeline() {
 extern "C" fn init(_user_data: *mut ffi::c_void) {
     sg::setup(&sg::Desc {
         environment: sglue::environment(),
-        logger: sg::Logger { func: Some(slog::slog_func), ..Default::default() },
+        logger: sg::Logger {
+            func: Some(slog::slog_func),
+            ..Default::default()
+        },
         ..Default::default()
     });
     sgl::setup(&sgl::Desc {
-        logger: sgl::Logger { func: Some(slog::slog_func), ..Default::default() },
+        logger: sgl::Logger {
+            func: Some(slog::slog_func),
+            ..Default::default()
+        },
         ..Default::default()
     });
     let mut text_desc = sdtx::Desc::default();
@@ -330,10 +338,9 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
 
     let update = {
         let context = ctx();
-        context
-            .cc
-            .as_ref()
-            .map_or((None, NULLPTR), |cc| (cc.config.update_fn, cc.config.user_data))
+        context.cc.as_ref().map_or((None, NULLPTR), |cc| {
+            (cc.config.update_fn, cc.config.user_data)
+        })
     };
     invoke_callback(update.0, update.1);
 
@@ -345,10 +352,9 @@ extern "C" fn frame(_user_data: *mut ffi::c_void) {
 
     let draw = {
         let context = ctx();
-        context
-            .cc
-            .as_ref()
-            .map_or((None, NULLPTR), |cc| (cc.config.draw_fn, cc.config.user_data))
+        context.cc.as_ref().map_or((None, NULLPTR), |cc| {
+            (cc.config.draw_fn, cc.config.user_data)
+        })
     };
     invoke_callback(draw.0, draw.1);
 
@@ -393,126 +399,132 @@ extern "C" fn event(event: *const sapp::Event, _user_data: *mut ffi::c_void) {
         return;
     };
     let Some(()) = with_current_cc(|cc| {
+        if let Some(callback) = &cc.config.event_fn {
+            match callback {
+                FnEvent::FnEventWithPtr(callback) => callback(event, cc.config.user_data),
+                FnEvent::FnEventWithNoPtr(callback) => callback(event),
+            }
+        }
 
-    if let Some(callback) = &cc.config.event_fn {
-        match callback {
-            FnEvent::FnEventWithPtr(callback) => callback(event, cc.config.user_data),
-            FnEvent::FnEventWithNoPtr(callback) => callback(event),
+        match event._type {
+            sapp::EventType::MouseDown
+                if !cc.last_mousedown || cc.last_mousebutton != event.mouse_button =>
+            {
+                if let Some(callback) = &cc.config.click_fn {
+                    match callback {
+                        FnClick::FnClickWithPtr(callback) => callback(
+                            event.mouse_x,
+                            event.mouse_y,
+                            event.mouse_button,
+                            cc.config.user_data,
+                        ),
+                        FnClick::FnClickWithNoPtr(callback) => {
+                            callback(event.mouse_x, event.mouse_y, event.mouse_button)
+                        }
+                    }
+                }
+            }
+            sapp::EventType::MouseUp
+                if cc.last_mousedown || cc.last_mousebutton != event.mouse_button =>
+            {
+                if let Some(callback) = &cc.config.unclick_fn {
+                    match callback {
+                        FnUnClick::FnUnClickWithPtr(callback) => callback(
+                            event.mouse_x,
+                            event.mouse_y,
+                            event.mouse_button,
+                            cc.config.user_data,
+                        ),
+                        FnUnClick::FnUnClickWithNoPtr(callback) => {
+                            callback(event.mouse_x, event.mouse_y, event.mouse_button)
+                        }
+                    }
+                }
+            }
+            sapp::EventType::MouseMove => {
+                if let Some(callback) = &cc.config.move_fn {
+                    match callback {
+                        FnMove::FnMoveWithPtr(callback) => {
+                            callback(event.mouse_x, event.mouse_y, cc.config.user_data)
+                        }
+                        FnMove::FnMoveWithNoPtr(callback) => callback(event.mouse_x, event.mouse_y),
+                    }
+                }
+            }
+            sapp::EventType::KeyDown
+                if !cc.last_keydown
+                    || cc.last_keycode != event.key_code
+                    || cc.last_modifiers != event.modifiers =>
+            {
+                if let Some(callback) = &cc.config.keydown_fn {
+                    match callback {
+                        FnKeyDown::FnKeyDownWithPtr(callback) => {
+                            callback(event.key_code, event.modifiers, cc.config.user_data)
+                        }
+                        FnKeyDown::FnKeyDownWithNoPtr(callback) => {
+                            callback(event.key_code, event.modifiers)
+                        }
+                    }
+                }
+            }
+            sapp::EventType::KeyUp
+                if cc.last_keydown
+                    || cc.last_keycode != event.key_code
+                    || cc.last_modifiers != event.modifiers =>
+            {
+                if let Some(callback) = &cc.config.keyup_fn {
+                    match callback {
+                        FnKeyUp::FnKeyUpWithPtr(callback) => {
+                            callback(event.key_code, event.modifiers, cc.config.user_data)
+                        }
+                        FnKeyUp::FnKeyUpWithNoPtr(callback) => {
+                            callback(event.key_code, event.modifiers)
+                        }
+                    }
+                }
+            }
+            _ => {}
         }
-    }
 
-    match event._type {
-        sapp::EventType::MouseDown
-            if !cc.last_mousedown || cc.last_mousebutton != event.mouse_button => {
-            if let Some(callback) = &cc.config.click_fn {
-                match callback {
-                    FnClick::FnClickWithPtr(callback) => callback(
-                        event.mouse_x,
-                        event.mouse_y,
-                        event.mouse_button,
-                        cc.config.user_data,
-                    ),
-                    FnClick::FnClickWithNoPtr(callback) => {
-                        callback(event.mouse_x, event.mouse_y, event.mouse_button)
-                    }
-                }
-            }
+        if event._type == sapp::EventType::MouseScroll {
+            cc.scroll_x = event.scroll_x;
+            cc.scroll_y = event.scroll_y;
+        } else {
+            cc.scroll_x = 0.0;
+            cc.scroll_y = 0.0;
         }
-        sapp::EventType::MouseUp
-            if cc.last_mousedown || cc.last_mousebutton != event.mouse_button => {
-            if let Some(callback) = &cc.config.unclick_fn {
-                match callback {
-                    FnUnClick::FnUnClickWithPtr(callback) => callback(
-                        event.mouse_x,
-                        event.mouse_y,
-                        event.mouse_button,
-                        cc.config.user_data,
-                    ),
-                    FnUnClick::FnUnClickWithNoPtr(callback) => {
-                        callback(event.mouse_x, event.mouse_y, event.mouse_button)
-                    }
-                }
-            }
+        if event._type == sapp::EventType::MouseMove {
+            cc.mouse_x = event.mouse_x;
+            cc.mouse_y = event.mouse_y;
+            cc.mouse_dx = event.mouse_dx;
+            cc.mouse_dy = event.mouse_dy;
+        } else {
+            cc.mouse_dx = 0.0;
+            cc.mouse_dy = 0.0;
         }
-        sapp::EventType::MouseMove => {
-            if let Some(callback) = &cc.config.move_fn {
-                match callback {
-                    FnMove::FnMoveWithPtr(callback) => {
-                        callback(event.mouse_x, event.mouse_y, cc.config.user_data)
-                    }
-                    FnMove::FnMoveWithNoPtr(callback) => callback(event.mouse_x, event.mouse_y),
-                }
-            }
+        if matches!(
+            event._type,
+            sapp::EventType::KeyDown | sapp::EventType::KeyUp
+        ) {
+            cc.last_keycode = event.key_code;
+            cc.last_modifiers = event.modifiers;
         }
-        sapp::EventType::KeyDown
-            if !cc.last_keydown
-                || cc.last_keycode != event.key_code
-                || cc.last_modifiers != event.modifiers => {
-            if let Some(callback) = &cc.config.keydown_fn {
-                match callback {
-                    FnKeyDown::FnKeyDownWithPtr(callback) => {
-                        callback(event.key_code, event.modifiers, cc.config.user_data)
-                    }
-                    FnKeyDown::FnKeyDownWithNoPtr(callback) => {
-                        callback(event.key_code, event.modifiers)
-                    }
-                }
-            }
+        if event._type == sapp::EventType::KeyDown {
+            cc.last_keydown = true;
+        } else if event._type == sapp::EventType::KeyUp {
+            cc.last_keydown = false;
         }
-        sapp::EventType::KeyUp
-            if cc.last_keydown
-                || cc.last_keycode != event.key_code
-                || cc.last_modifiers != event.modifiers => {
-            if let Some(callback) = &cc.config.keyup_fn {
-                match callback {
-                    FnKeyUp::FnKeyUpWithPtr(callback) => {
-                        callback(event.key_code, event.modifiers, cc.config.user_data)
-                    }
-                    FnKeyUp::FnKeyUpWithNoPtr(callback) => {
-                        callback(event.key_code, event.modifiers)
-                    }
-                }
-            }
+        if event._type == sapp::EventType::MouseDown {
+            cc.last_mousebutton = event.mouse_button;
+            cc.last_mousedown = true;
+        } else if event._type == sapp::EventType::MouseUp {
+            cc.last_mousebutton = event.mouse_button;
+            cc.last_mousedown = false;
         }
-        _ => {}
-    }
-
-    if event._type == sapp::EventType::MouseScroll {
-        cc.scroll_x = event.scroll_x;
-        cc.scroll_y = event.scroll_y;
-    } else {
-        cc.scroll_x = 0.0;
-        cc.scroll_y = 0.0;
-    }
-    if event._type == sapp::EventType::MouseMove {
-        cc.mouse_x = event.mouse_x;
-        cc.mouse_y = event.mouse_y;
-        cc.mouse_dx = event.mouse_dx;
-        cc.mouse_dy = event.mouse_dy;
-    } else {
-        cc.mouse_dx = 0.0;
-        cc.mouse_dy = 0.0;
-    }
-    if matches!(event._type, sapp::EventType::KeyDown | sapp::EventType::KeyUp) {
-        cc.last_keycode = event.key_code;
-        cc.last_modifiers = event.modifiers;
-    }
-    if event._type == sapp::EventType::KeyDown {
-        cc.last_keydown = true;
-    } else if event._type == sapp::EventType::KeyUp {
-        cc.last_keydown = false;
-    }
-    if event._type == sapp::EventType::MouseDown {
-        cc.last_mousebutton = event.mouse_button;
-        cc.last_mousedown = true;
-    } else if event._type == sapp::EventType::MouseUp {
-        cc.last_mousebutton = event.mouse_button;
-        cc.last_mousedown = false;
-    }
-    if event._type == sapp::EventType::Resized {
-        cc.width = event.window_width.max(0) as usize;
-        cc.height = event.window_height.max(0) as usize;
-    }
+        if event._type == sapp::EventType::Resized {
+            cc.width = event.window_width.max(0) as usize;
+            cc.height = event.window_height.max(0) as usize;
+        }
     }) else {
         return;
     };
@@ -701,7 +713,10 @@ pub fn mouse_button() -> Mousebutton {
 }
 
 pub fn mouse_pressed() -> bool {
-    get_context().cc.as_ref().is_some_and(|cc| cc.last_mousedown)
+    get_context()
+        .cc
+        .as_ref()
+        .is_some_and(|cc| cc.last_mousedown)
 }
 
 pub fn mouse_released() -> bool {
@@ -712,7 +727,8 @@ pub fn mouse_just_pressed(button: Mousebutton) -> bool {
     get_context().cc.as_ref().is_some_and(|cc| {
         cc.last_mousedown
             && cc.last_mousebutton == button
-            && (cc.prev_mousebutton != cc.last_mousebutton || cc.prev_mousedown != cc.last_mousedown)
+            && (cc.prev_mousebutton != cc.last_mousebutton
+                || cc.prev_mousedown != cc.last_mousedown)
     })
 }
 
@@ -720,7 +736,8 @@ pub fn mouse_just_released(button: Mousebutton) -> bool {
     get_context().cc.as_ref().is_some_and(|cc| {
         !cc.last_mousedown
             && cc.last_mousebutton == button
-            && (cc.prev_mousebutton != cc.last_mousebutton || cc.prev_mousedown != cc.last_mousedown)
+            && (cc.prev_mousebutton != cc.last_mousebutton
+                || cc.prev_mousedown != cc.last_mousedown)
     })
 }
 
@@ -761,18 +778,18 @@ pub fn toggle_fullscreen() {
 
 pub fn width() -> i32 {
     let context = get_context();
-    context
-        .cc
-        .as_ref()
-        .map_or_else(|| context.pref.size.map_or(0, |size| size.x), |_| sapp::width())
+    context.cc.as_ref().map_or_else(
+        || context.pref.size.map_or(0, |size| size.x),
+        |_| sapp::width(),
+    )
 }
 
 pub fn height() -> i32 {
     let context = get_context();
-    context
-        .cc
-        .as_ref()
-        .map_or_else(|| context.pref.size.map_or(0, |size| size.y), |_| sapp::height())
+    context.cc.as_ref().map_or_else(
+        || context.pref.size.map_or(0, |size| size.y),
+        |_| sapp::height(),
+    )
 }
 
 pub fn frame_count() -> u64 {

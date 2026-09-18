@@ -10,6 +10,8 @@ repository = "https://github.com/cc4v/cc4rs"
 sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
 stack-stack = "0.1.0"
 image = "0.25"
+lyon_tessellation = "1.0"
+lyon_path = "1.0"
 
 [dev-dependencies]
 global_var = "0.1.0"

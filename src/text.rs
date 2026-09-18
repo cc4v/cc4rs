@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use crate::{colors, with_current_cc, TextCfg};
+use crate::{TextCfg, colors, with_current_cc};
 use sokol::{app as sapp, debugtext as sdtx};
 
 pub fn init_frame() {
@@ -25,7 +25,10 @@ fn draw_text(message: &str, x: f32, y: f32, config: TextCfg) {
     let color = colors::u8_color(config.color);
 
     sdtx::font(0);
-    sdtx::canvas(sapp::widthf() / (font_size / 8.0), sapp::heightf() / (font_size / 8.0));
+    sdtx::canvas(
+        sapp::widthf() / (font_size / 8.0),
+        sapp::heightf() / (font_size / 8.0),
+    );
     sdtx::origin(0.0, 0.0);
     sdtx::color4b(color.r, color.g, color.b, color.a);
     sdtx::pos(x / font_size, y / font_size);

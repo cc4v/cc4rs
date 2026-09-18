@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-use sokol::{gfx as sg};
+use sokol::gfx as sg;
 
 pub struct ColorU8 {
     pub r: u8,
@@ -18,8 +18,8 @@ pub fn default_color() -> Color {
         r: 0.0,
         g: 0.0,
         b: 0.0,
-        a: 1.0
-    }
+        a: 1.0,
+    };
 }
 
 pub fn default_color_u8() -> ColorU8 {
@@ -28,16 +28,16 @@ pub fn default_color_u8() -> ColorU8 {
         g: 0,
         b: 00,
         a: 255,
-    }
+    };
 }
 
-pub fn color(r: u8, g: u8, b: u8, a :u8) -> Color {
+pub fn color(r: u8, g: u8, b: u8, a: u8) -> Color {
     return Color {
         r: (r as f32) / 255.0,
         g: (g as f32) / 255.0,
         b: (b as f32) / 255.0,
         a: (a as f32) / 255.0,
-    }
+    };
 }
 
 // #[macro_export]

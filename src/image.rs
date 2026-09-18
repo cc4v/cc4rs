@@ -38,11 +38,20 @@ pub fn load_image(path: &str) -> Result<Image, ImageError> {
         ..Default::default()
     });
     let view = sg::make_view(&sg::ViewDesc {
-        texture: sg::TextureViewDesc { image, ..Default::default() },
+        texture: sg::TextureViewDesc {
+            image,
+            ..Default::default()
+        },
         ..Default::default()
     });
 
-    Ok(Image { width, height, image, sampler, view })
+    Ok(Image {
+        width,
+        height,
+        image,
+        sampler,
+        view,
+    })
 }
 
 pub fn delete_image(image: &mut Image) {
@@ -71,7 +80,16 @@ pub fn image_with_size(image: &Image, x: f32, y: f32, width: f32, height: f32) {
     sgl::begin_quads();
     sgl::v2f_t2f_c4b(x, y, 0.0, 0.0, rgba.r, rgba.g, rgba.b, rgba.a);
     sgl::v2f_t2f_c4b(x + width, y, 1.0, 0.0, rgba.r, rgba.g, rgba.b, rgba.a);
-    sgl::v2f_t2f_c4b(x + width, y + height, 1.0, 1.0, rgba.r, rgba.g, rgba.b, rgba.a);
+    sgl::v2f_t2f_c4b(
+        x + width,
+        y + height,
+        1.0,
+        1.0,
+        rgba.r,
+        rgba.g,
+        rgba.b,
+        rgba.a,
+    );
     sgl::v2f_t2f_c4b(x, y + height, 0.0, 1.0, rgba.r, rgba.g, rgba.b, rgba.a);
     sgl::end();
     sgl::disable_texture();
@@ -81,14 +99,7 @@ pub fn image_3d(image: &Image, x: f32, y: f32, z: f32) {
     image_3d_with_size(image, x, y, z, image.width as f32, image.height as f32);
 }
 
-pub fn image_3d_with_size(
-    image: &Image,
-    x: f32,
-    y: f32,
-    z: f32,
-    width: f32,
-    height: f32,
-) {
+pub fn image_3d_with_size(image: &Image, x: f32, y: f32, z: f32, width: f32, height: f32) {
     let color = with_current_cc(|cc| cc.current_style.color).unwrap_or_else(colors::white);
     let pipeline = with_current_cc(|cc| cc.pipelines.alpha);
     if let Some(pipeline) = pipeline {
@@ -100,7 +111,17 @@ pub fn image_3d_with_size(
     sgl::begin_quads();
     sgl::v3f_t2f_c4b(x, y, z, 0.0, 0.0, rgba.r, rgba.g, rgba.b, rgba.a);
     sgl::v3f_t2f_c4b(x + width, y, z, 1.0, 0.0, rgba.r, rgba.g, rgba.b, rgba.a);
-    sgl::v3f_t2f_c4b(x + width, y + height, z, 1.0, 1.0, rgba.r, rgba.g, rgba.b, rgba.a);
+    sgl::v3f_t2f_c4b(
+        x + width,
+        y + height,
+        z,
+        1.0,
+        1.0,
+        rgba.r,
+        rgba.g,
+        rgba.b,
+        rgba.a,
+    );
     sgl::v3f_t2f_c4b(x, y + height, z, 0.0, 1.0, rgba.r, rgba.g, rgba.b, rgba.a);
     sgl::end();
     sgl::disable_texture();
