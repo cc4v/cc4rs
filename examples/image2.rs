@@ -1,33 +1,39 @@
 use cc4rs::*;
+use global_var::new_global_var;
+
+new_global_var!(Option<Image>, None);
 
 fn main() {
-    let state = Box::into_raw(Box::new(None::<Image>)) as RawPtr;
-    on_init!(setup, with_data);
-    on_exit!(cleanup, with_data);
-    run_with_data(draw, state);
+    on_init!(setup);
+    on_exit!(cleanup);
+    run(draw);
 }
 
-fn setup(user_data: RawPtr) {
+fn setup() {
     unsafe {
-        let image = &mut *(user_data as *mut Option<Image>);
-        *image = load_image("examples/assets/sample.png").ok();
-    }
-}
-
-fn draw(user_data: RawPtr) {
-    set_color(colors::white());
-    unsafe {
-        let state = &*(user_data as *const Option<Image>);
-        if let Some(texture) = state {
-            image(texture, 0.0, 0.0);
+        match load_image("examples/assets/sample.png") {
+            Ok(image) => *get_mut_global_var() = Some(image),
+            Err(error) => eprintln!("failed to load image: {error}"),
         }
     }
 }
 
-fn cleanup(user_data: RawPtr) {
+fn draw() {
+    set_color(colors::white());
     unsafe {
-        let state = Box::from_raw(user_data as *mut Option<Image>);
-        if let Some(mut image) = *state {
+        if let Some(texture) = get_mut_global_var().as_ref() {
+            image(texture, 0.0, 0.0);
+            image_with_size(texture, 180.0, 0.0, 100.0, 100.0);
+        } else {
+            set_color(colors::red());
+            text("Image not found", 20.0, 20.0);
+        }
+    }
+}
+
+fn cleanup() {
+    unsafe {
+        if let Some(mut image) = get_mut_global_var().take() {
             delete_image(&mut image);
         }
     }

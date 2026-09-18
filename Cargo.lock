@@ -174,6 +174,7 @@ dependencies = [
 name = "cc4rs"
 version = "0.1.0"
 dependencies = [
+ "global_var",
  "image",
  "sokol",
  "stack-stack",
@@ -338,6 +339,12 @@ dependencies = [
  "color_quant",
  "weezl",
 ]
+
+[[package]]
+name = "global_var"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be24af0101a9c9b2aac7f1060f5125a21312e62cc251b27d02794e01f3258472"
 
 [[package]]
 name = "half"
