@@ -29,9 +29,11 @@ cargo run --example logo_icon
 
 In your Cargo.toml:
 
-```
+```toml
 cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
-sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
+
+# if you need sokol API also (need to match submodule revision ID):
+# sokol = { version="*", git="https://github.com/floooh/sokol-rust.git", rev="30bf716" }
 ```
 
 (Maybe register to crate.io later, but just maybe.)
