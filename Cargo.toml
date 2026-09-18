@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 description = "Creative Coding framework for Rust, using Sokol framework"
 license = "MPL-2.0"
+repository = "https://github.com/cc4v/cc4rs"
 
 [dependencies]
 # sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
