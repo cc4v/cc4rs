@@ -25,6 +25,15 @@ cargo run --example logo_icon
 # `cargo run --example` will show list of examples
 ```
 
+## Use as crate
+
+```
+cc4rs = { version="*", git="https://github.com/cc4v/cc4rs.git" }
+sokol = { version="*", git="https://github.com/floooh/sokol-rust.git" }
+```
+
+(Maybe register to crate.io later, but just maybe.)
+
 ## License
 
 - Files under `externals` are submodules to each other projects:
